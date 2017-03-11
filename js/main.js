@@ -3,6 +3,14 @@ var myCurrentScreen = 0;
 var myCurrentTopQuestion = 0;
 var myReadyState = 0;
 
+function UserInfo(name, email, company, title, phone) {
+	this.name = name;
+	this.email = email;
+	this.company = company;
+	this.title = title;
+	this.phone = phone;
+}
+
 function Question(number, text, group, screen, answer) {
 	this.number = number;
 	this.text = text;
@@ -111,6 +119,10 @@ function displayNextQuestionSet() {
 	document.getElementById("hc-question-1").getElementsByClassName("hc-answer-key")[0].getElementsByTagName("input")[2].focus();
 
 	theProgressBar = theQuestionSection.insertBefore(theProgressBar, theQuestionSection.firstElementChild);
+	theProgressBar.getElementsByClassName("hc-progress")[0].style.width = (1 + (99 * myCurrentTopQuestion / myQuestions.length)) + "%";
+	theProgressBar.getElementsByTagName("p")[0].innerHTML = "";
+	theProgressBar.getElementsByTagName("p")[0].appendChild(document.createTextNode(myCurrentTopQuestion + " of " + myQuestions.length + " completed (" + Math.trunc(1 + (99 * myCurrentTopQuestion / myQuestions.length)) + "%)"));
+
 	theButton = theQuestionSection.appendChild(theButton);
 	localStorage.setItem('theQuestionSection',theQuestionSection.innerHTML);
 
@@ -254,7 +266,7 @@ function waitUntilReady(callback) {
 		} else {
 			waitUntilReady(callback);
 		}
-	}, 0);
+	}, 5);
 }
 
 function loadQuestions() {
