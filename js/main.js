@@ -1,6 +1,7 @@
 var myQuestions = [];
 var myCurrentScreen = 0;
 var myCurrentTopQuestion = 0;
+var myReadyState = 0;
 
 function Question(number, text, group, screen, answer) {
 	this.number = number;
@@ -16,7 +17,7 @@ function jumpToNextQuestion(myElement) {
 	if (myNextQuestion) {
 		if (myElement.parentNode.getAttribute("data-scrolled") === "false") {
 			window.scroll({ top: myNextQuestion.getBoundingClientRect().top + window.scrollY, left: 0, behavior: 'smooth' });
-			myNextQuestion = myNextQuestion.getElementsByClassName("hc-answer-key")[0].children[1];
+			myNextQuestion = myNextQuestion.getElementsByClassName("hc-answer-key")[0].getElementsByTagName("input")[2];
 			myNextQuestion.focus();
 			myElement.parentNode.setAttribute("data-scrolled", "true");
 		}
@@ -37,6 +38,10 @@ function jumpToNextQuestion(myElement) {
 // 	//
 }
 
+function displayResults() {
+	window.localStorage.clear();
+}
+
 function displayNextQuestionSet() {
 	//increment the screen counter
 	//for each question with matching screen value in myQuestions
@@ -51,14 +56,20 @@ function displayNextQuestionSet() {
 		theButton,
 		theProgressBar;
 		
+	if (myCurrentScreen === myQuestions[myQuestions.length - 1].screen) {
+		displayResults();
+		return;
+	}
+
 	myCurrentScreen++;
 	window.scroll({ top: 0, left: 0, behavior: 'smooth' });
 
 	theQuestionSection = document.getElementById("hc-question-section");
 
-	if (localStorage.getItem('theQuestionSection')) {
-		theQuestionSection.innerHTML = localStorage.getItem('theQuestionSection');
-	}
+	// if (localStorage.getItem('theQuestionSection')) {
+	// 	alert("Local storage contains " + localStorage.getItem('theQuestionSection'));
+	// 	theQuestionSection.innerHTML = localStorage.getItem('theQuestionSection');
+	// }
 
 	theQuestionTemplate = theQuestionSection.removeChild(document.getElementById("hc-question-1"));
 	theButton = theQuestionSection.removeChild(document.getElementsByClassName("hc-button-wrapper")[0]);
@@ -97,11 +108,11 @@ function displayNextQuestionSet() {
 		}
 	});
 
+	document.getElementById("hc-question-1").getElementsByClassName("hc-answer-key")[0].getElementsByTagName("input")[2].focus();
+
 	theProgressBar = theQuestionSection.insertBefore(theProgressBar, theQuestionSection.firstElementChild);
 	theButton = theQuestionSection.appendChild(theButton);
-
 	localStorage.setItem('theQuestionSection',theQuestionSection.innerHTML);
-	console.log(localStorage.getItem('theQuestionSection'));
 
 }
 
@@ -123,9 +134,7 @@ function storeLoadedQuestions(rawText) {
 			myQuestions.push(new Question(0, element, 0, 0, 0));
 		}
 	});
-	if (myQuestions[myQuestions.length - 1].number > 0 && myQuestions[myQuestions.length - 1].text.length > 0) {
-		displayNextQuestionSet();
-	}
+	myReadyState++;
 }
 
 function storeLoadedQuestionNumbers(rawText) {
@@ -150,10 +159,8 @@ function storeLoadedQuestionNumbers(rawText) {
 		} else {
 			myQuestions.push(new Question(element[0], "", element[1], element[2], 0));
 		}
-	})
-	if (myQuestions[myQuestions.length - 1].number > 0 && myQuestions[myQuestions.length - 1].text.length > 0) {
-		displayNextQuestionSet();
-	}
+	});
+	myReadyState++;
 }
 
 function readFile(url, callback) {
@@ -196,17 +203,58 @@ function checkAnswers() {
 
 function scrapeAnswers() {
 	//get current set of answers, check for completion, save answers in myQuestions, update local storage of myQuestions
-	var myAnswerSet = document.getElementsByClassName("hc-answer-key");
+	var myAnswerSet = document.getElementsByClassName("hc-answer-key"),
+		flagDone = false;
 
 	[].forEach.call(myAnswerSet, function(element, index) {
 		var myTotal = 0;
 		[].forEach.call(element.getElementsByTagName("input"), function(innerElement) {
 			myTotal += innerElement.checked * innerElement.value;
 		});
-		myQuestions[myCurrentTopQuestion + index].answer = myTotal;
-		localStorage.setItem('answer' + (myCurrentTopQuestion + index), myTotal);
+		myQuestions[myCurrentTopQuestion + index - 1].answer = myTotal;
+		localStorage.setItem('answer' + (myCurrentTopQuestion + index - 1), myTotal);
+		if (myCurrentTopQuestion + index === myQuestions.length) {
+			flagDone = true; //end of survey!
+			console.log((myCurrentTopQuestion + index) + " questions answered; complete!");
+		}
 	});
 	localStorage.setItem('myCurrentScreen', myCurrentScreen);
+	if (flagDone) {
+		myCurrentTopQuestion = myQuestions.length;
+	}
+}
+
+function recoverLocalData() {
+	if (localStorage.getItem('myCurrentScreen') > 0) {
+		myCurrentScreen = localStorage.getItem('myCurrentScreen');
+		console.log("Recovering " + myCurrentScreen + " screens...");
+
+		if (localStorage.getItem('theQuestionSection')) {
+			// alert("Local storage contains " + localStorage.getItem('theQuestionSection'));
+			document.getElementById("hc-question-section").innerHTML = localStorage.getItem('theQuestionSection');
+		}
+
+		for (var i = 0; i < myQuestions.length; i++) {
+			if (localStorage.getItem('answer' + i) ) {
+				myQuestions[i].answer = localStorage.getItem('answer' + i);
+				console.log(i + ": " + myQuestions[i].answer);
+			} else {
+				i = myQuestions.length;
+			}
+		}
+	}
+	myReadyState++;
+}
+
+function waitUntilReady(callback) {
+	setTimeout(function() {
+		if (myReadyState === 3) {
+			myReadyState = 0;
+			callback();
+		} else {
+			waitUntilReady(callback);
+		}
+	}, 0);
 }
 
 function loadQuestions() {
@@ -215,22 +263,14 @@ function loadQuestions() {
 	readFile("data/hc_questions_v2.0.txt", storeLoadedQuestions);
 	readFile("data/hc_question_numbers_v2.0.csv", storeLoadedQuestionNumbers);
 
-	if (localStorage.getItem('myCurrentScreen') > 0) {
-		for (var i = 0; i < myQuestions.length; i++) {
-			if (localStorage.getItem('answer' + i)) {
-				myQuestions[i].answer = localStorage.getItem('answer' + i);
-				console.log(i + ": " + myQuestions[i].answer);
-			} else {
-				i = myQuestions.length;
-			}
-		}
-		myCurrentScreen = localStorage.getItem('myCurrentScreen');
-		console.log("Loading up to screen " + myCurrentScreen);
-		displayNextQuestionSet();
-	}
+	recoverLocalData();
+
+	waitUntilReady(displayNextQuestionSet);
 
 	document.getElementById("hc-button-next").addEventListener("click", function() {
-		if (checkAnswers()) {
+		if (myCurrentTopQuestion === myQuestions.length) {
+//			displayResults();
+		} else if (checkAnswers()) {
 			scrapeAnswers();
 			displayNextQuestionSet();
 		}
@@ -247,9 +287,6 @@ function calculateScores() {
 
 }
 
-function displayResults() {
-	window.localStorage.clear();
-}
 
 function createReport() {
 
