@@ -1,8 +1,14 @@
 var myQuestions = [],
-	mySections = [];
+	myTopics = [];
 var myCurrentScreen = 0,
 	myCurrentTopQuestion = 0,
 	myReadyState = 0;
+
+function Topic(index, name, score) {
+	this.index = index;
+	this.name = name;
+	this.score = score;
+}
 
 function UserInfo(email, name, title, company, phone) {
 	this.email = email;
@@ -12,10 +18,10 @@ function UserInfo(email, name, title, company, phone) {
 	this.phone = phone;
 }
 
-function Question(number, text, group, screen, answer) {
+function Question(number, text, topic, screen, answer) {
 	this.number = number;
 	this.text = text;
-	this.group = group;
+	this.topic = topic;
 	this.screen = screen;
 	this.answer = answer;
 }
@@ -47,18 +53,101 @@ function jumpToNextQuestion(myElement) {
 // 	//
 }
 
+function toggleVisibility(element, waitTime = 500) {
+	if (element.classList.contains("gone") || element.classList.contains("hidden")) {
+		element.classList.remove("gone");
+		setTimeout(function() {element.classList.remove("hidden"); console.log(element.classList + " becomes visible");}, waitTime);
+	} else {
+		element.classList.add("hidden");
+		element.classList.add("gone");
+	}
+}
+
+function calculateScores(callback) {
+	//crunch numbers to calc results
+	var indexTopic = 0,
+		countQuestionsInTopic = 0;
+	if (!(myTopics.length > 0)) {
+		myTopics.push(new Topic(0, "Total Score", 0));
+	}
+	for (var i = 0; i < myQuestions.length; i++) {
+		if (indexTopic === myQuestions[i].topic) {
+			countQuestionsInTopic++;
+			myTopics[indexTopic].score += myQuestions[i].answer;
+		} else {
+			if (countQuestionsInTopic > 0) {
+				myTopics[indexTopic].score = myTopics[indexTopic].score / countQuestionsInTopic;
+				myTopics[0].score += myTopics[indexTopic].score;
+			}
+			indexTopic = myQuestions[i].topic;
+			countQuestionsInTopic = 1;
+			myTopics.push(new Topic(indexTopic, "Topic " + indexTopic, myQuestions[i].answer));
+		}
+	}
+	myTopics[indexTopic].score = myTopics[indexTopic].score / countQuestionsInTopic;
+	myTopics[0].score += myTopics[indexTopic].score;
+	myTopics[0].score = myTopics[0].score / (myTopics.length - 1);
+	console.log("Scores by topic (index 0 is totals):")
+	console.log(myTopics);
+	callback();
+}
+
+function showScores() {
+	//set topic score bars
+	[].forEach.call(document.getElementById("hc-results-section").getElementsByClassName("hc-progress"), function(element, index) {
+		toggleVisibility(element);
+		console.log("Showing bar for topic #" + index + "...");
+		element.style.transform = "scaleX(" + (1 / (6 - myTopics[index + 1].score)) + ")";
+		element.style.transition = "transform 1.5s ease-in-out";
+		if (myTopics[index + 1].score < 4) {
+//			console.log(element);
+			element.classList.add("warning");
+		}
+	});
+	if (myTopics[0].score >= 4.7) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "A+";
+	} else if (myTopics[0].score >= 4.2) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "A";
+	} else if (myTopics[0].score >= 4.0) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "A-";
+	} else if (myTopics[0].score >= 3.7) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "B+";
+	} else if (myTopics[0].score >= 3.2) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "B";
+	} else if (myTopics[0].score >= 3.0) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "B-";
+	} else if (myTopics[0].score >= 2.7) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "C+";
+	} else if (myTopics[0].score >= 2.2) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "C";
+	} else if (myTopics[0].score >= 2.0) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "C-";
+	} else if (myTopics[0].score >= 1.7) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "D+";
+	} else if (myTopics[0].score >= 1.2) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "D";
+	} else if (myTopics[0].score >= 1.0) {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "D-";
+	} else {
+		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "F";
+	}
+}
+
 function displayResults() {
 	console.log("displayResults");
 
-	setTimeout(function() {document.getElementById("hc-results-section").classList.remove("hidden");},100);
-	document.getElementById("hc-results-section").classList.remove("gone");
-	document.getElementById("hc-question-section").classList.add("hidden");
-	document.getElementById("hc-question-section").classList.add("gone");
-	setTimeout(function() {document.getElementById("hc-user-info").classList.remove("gone")},1000);
+	toggleVisibility(document.getElementById("hc-results-section"));
+	toggleVisibility(document.getElementById("hc-question-section"));
+	toggleVisibility(document.getElementsByClassName("hc-results-actions-wrapper")[0],1000);
+	toggleVisibility(document.getElementById("hc-user-info"), 1500);
+
+	//calculate!
+	console.log("Calculating...");
+	calculateScores(showScores);
 
 	document.getElementById("hc-results-request").addEventListener("click", function() {
-			window.localStorage.clear();
-		});
+		window.localStorage.clear();
+	});
 }
 
 function displayNextQuestionSet() {
@@ -94,7 +183,7 @@ function displayNextQuestionSet() {
 
 	theQuestionTemplate = theQuestionSection.removeChild(document.getElementById("hc-question-1"));
 	theButton = theQuestionSection.removeChild(document.getElementsByClassName("hc-button-wrapper")[0]);
-	theProgressBar = theQuestionSection.removeChild(document.getElementsByClassName("hc-progress-bar")[0]);
+	theProgressBar = theQuestionSection.removeChild(theQuestionSection.getElementsByClassName("hc-progress-bar")[0]);
 	theQuestionSection.innerHTML = "";
 
 	myQuestions.forEach(function(element) {
@@ -179,7 +268,7 @@ function storeLoadedQuestionNumbers(rawText) {
 	myNumberArray.forEach(function(element, index, array) {
 		if (myQuestions.length > index) {
 			myQuestions[index].number = element[0];
-			myQuestions[index].group = element[1];
+			myQuestions[index].topic = element[1];
 			myQuestions[index].screen = element[2];
 		} else {
 			myQuestions.push(new Question(element[0], "", element[1], element[2], 0));
@@ -239,6 +328,7 @@ function scrapeAnswers() {
 		});
 		myQuestions[myCurrentTopQuestion + index - 1].answer = myTotal;
 		localStorage.setItem('answer' + (myCurrentTopQuestion + index - 1), myTotal);
+		console.log("Answer to #" + (myCurrentTopQuestion + index - 1) + " stored: " + myTotal);
 		if (myCurrentTopQuestion + index === myQuestions.length) {
 			flagDone = true; //end of survey!
 			console.log((myCurrentTopQuestion + index) + " questions answered; complete!");
@@ -250,7 +340,7 @@ function scrapeAnswers() {
 	}
 }
 
-function recoverLocalData() {
+function recoverLocalData(callback) {
 	if (localStorage.getItem('myCurrentScreen') > 0) {
 		myCurrentScreen = Number(localStorage.getItem('myCurrentScreen'));
 		console.log("Recovering " + myCurrentScreen + " screens...");
@@ -261,6 +351,7 @@ function recoverLocalData() {
 		}
 
 		for (var i = 0; i < myQuestions.length; i++) {
+			console.log("Looking for answers to question " + i);
 			if (localStorage.getItem('answer' + i) ) {
 				myQuestions[i].answer = Number(localStorage.getItem('answer' + i));
 				console.log(i + ": " + myQuestions[i].answer);
@@ -269,7 +360,7 @@ function recoverLocalData() {
 			}
 		}
 	}
-	myReadyState++;
+	callback();
 }
 
 function beginSurvey() {
@@ -285,15 +376,14 @@ function beginSurvey() {
 	displayNextQuestionSet();
 }
 
-function waitUntilReady(callback) {
+function waitUntilReady(howMany, callback) {
 	setTimeout(function() {
-		if (myReadyState === 3) {
-			myReadyState = 0;
+		if (myReadyState >= howMany) {
 			callback();
 		} else {
 			waitUntilReady(callback);
 		}
-	}, 5);
+	}, 50);
 }
 
 function loadQuestions() {
@@ -302,21 +392,12 @@ function loadQuestions() {
 	readFile("data/hc_questions_v2.0.txt", storeLoadedQuestions);
 	readFile("data/hc_question_numbers_v2.0.csv", storeLoadedQuestionNumbers);
 
-	recoverLocalData();
-
-	waitUntilReady(beginSurvey);
+	waitUntilReady(2, function() {
+		recoverLocalData(beginSurvey);
+	});
 
 	//note: should have error trapping, to be implemented
 }
-
-function calculateScores() {
-	//crunch numbers to calc results
-	var myFlaggedQuestions = [];
-	var myScores = [0,0,0,0,0,0];
-	var myTotalScore = 0;
-
-}
-
 
 function createReport() {
 

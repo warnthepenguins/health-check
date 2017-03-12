@@ -1,3 +1,22 @@
+/* Color Scheme
+
+---Gray body---
+  background: #ddd;
+
+---Off-white cards---
+  background: #eee;
+
+---Accent-green progress bars---
+  background: #00E676;
+
+---Yellow warnings---
+  background: #FFE57F;
+
+---Dark green results panel---
+  background: #2E7D32;
+
+*/
+
 *, *:after, *:before {
   box-sizing: border-box;
 }
@@ -24,36 +43,38 @@ section {
 }
 
 .hidden {
-  height: 0px;
+  visibility: hidden;
+  /*height: 0px;*/
   opacity: 0;
+  color: rgba(0,0,0,0);
 }
 
 .hc-results-wrapper {
   width: 100%;
-  min-height: 50em;
+  /*height: 100em;*/
   padding: 3em 5% 1em;
-  background: #eee;
   border-radius: .5vh;
   border-style: none;
   border: 0px;
-  color: black;
-  background: #66BB6A;
-  transition: opacity 0.4s ease-in-out,
-              height 1.2s ease-in-out,
+  font-color: black;
+  opacity: 1;
+  background: #2E7D32;
+  transition: background 2.4s ease-in-out,
+              opacity 2.4s ease-in-out,
               padding-top 1.2s ease-in-out,
               padding-bottom 1.2s ease-in-out;
 
 }
 
 .hc-results-wrapper .card-rise {
-  max-width: 50%;
-  min-width: 25%;
+  max-width: 75%;
+  min-width: 50%;
   padding: 2.5em 5% 2em;
   margin: 0 auto 2em;
   background: #eee;
-  transition: padding 1s 0.4s ease-in-out,
-              box-shadow 1s 0.4s ease-in-out,
-              background 1s 0.8s ease-in-out;
+  transition: padding 1s 1s ease-in-out,
+              box-shadow 1s 1s ease-in-out,
+              background 1s 1s ease-in-out;
 }
 
 .hc-results-caption {
@@ -69,16 +90,34 @@ section {
   font-weight: bold;
 }
 
-.hc-results-actions-wrapper {
+#hc-results-section .hc-progress-bar {
+  height: 3em;
+  padding: 0;
+  margin-bottom: 0.75em;
+}
+
+#hc-results-section .hc-progress-bar p {
   width: 100%;
-  background: #eee;
-  font-family: sans-serif;
-  max-width: 75%;
-  min-width: 50%;
-  padding: 2.5em 5% 2em;
-  margin: 0 auto 2em;
-  transition: box-shadow 1s 1.2s ease-in-out,
-              background 1s 1.2s ease-in-out;
+  display: block;
+  height: 1em;
+  font-weight: bold;
+  color: rgba(0,0,0,0.7);
+  position: relative;
+  margin-top: calc(-2em);
+  text-align: center;
+}
+
+#hc-results-section .hc-progress-bar:nth-last-child(2) {
+  margin-bottom: 2em;
+}
+
+.hc-results-header {
+  margin: 1em auto 1em;
+  text-align: justify;
+}
+
+.hc-results-header h2 {
+  text-align: center;
 }
 
 .hc-results-actions-wrapper label,
@@ -89,16 +128,17 @@ section {
 
 .hc-results-actions-wrapper label {
   font-variant: small-caps;
-  font-size: 0.9em;
-  color: rgba(0,0,0,0.85);
-  margin-top: 0.25em;
+  font-size: 0.8em;
+  color: rgba(0,0,0,0.8);
+  margin-top: 0.75em;
 }
 
 .hc-results-actions-wrapper .hc-phone-checkbox {
   display: block;
   padding: 0;
   width: auto;
-  text-align: center;
+  padding-left: 1em;
+  margin-top: 0.25em;
 }
 
 .hc-results-actions-wrapper .hc-phone-checkbox input {
@@ -110,6 +150,7 @@ section {
   width: auto;
   font-variant: normal;
   font-style: italic;
+  padding-left: 0;
 }
 
 .hc-results-actions-wrapper .clickable {
@@ -121,16 +162,8 @@ section {
   overflow-wrap: break-word;
 }
 
-#hc-question-section {
-/*  display: block;
-  max-width: 600px;
-  width: 90vw;
-  margin: 0 auto 50px;
-*/}
-
 .hc-progress-bar {
   width: 100%;
-  height: 3em;
   border-radius: .5vh;
   border-style: none;
   color: black;
@@ -138,16 +171,22 @@ section {
   background: #eee;
 }
 
+#hc-question-section .hc-progress-bar {
+  height: 3em;
+}
+
 .hc-progress {
-  width: 10%;
+  transform: scaleX(1);
+  width: 100%;
   height: 100%;
   border-radius: inherit;
   position: relative;
-  background: #66BB6A;
+  background: #00E676;
   overflow: visible;
+  transition: transform 1.5s ease-in-out;
 }
 
-.hc-progress-bar p {
+#hc-question-section .hc-progress-bar p {
   width: 100%;
   height: 1em;
   font-weight: normal;
@@ -363,17 +402,12 @@ section {
 .card-rise {
   margin-bottom: 1em;
   box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-  transition: all 0.1s cubic-bezier(.25,.8,.25,1);
-}
-
-.card-rise-2 {
-  margin-bottom: 1em;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-  transition: all 0.1s cubic-bezier(.25,.8,.25,1);
 }
 
 .warning {
   background: #FFE57F;
+  transition: background 1.5s ease-in-out;
+
 }
 
 /*.card-5 {

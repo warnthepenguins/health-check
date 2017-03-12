@@ -23,14 +23,39 @@
 <body>
   <h1>Sophity Health Check</h1>
 
-  <section id="hc-results-section" class="hidden">
+  <section id="hc-results-section" class="hidden gone">
     <div class="hc-results-wrapper">
       <div class="card-rise">
         <div class="hc-results-caption">Your Score</div>
-        <div class="hc-results-score">A</div>
+        <div class="hc-results-score">?</div>
       </div>
-      <div class="hc-results-actions-wrapper card-rise-2">
-        <div class="hc-user-info gone" id="hc-user-info">
+
+      <div class="card-rise hc-progress-bar">
+        <div class="hc-progress hidden"></div><p>Topic 1</p>
+      </div>
+      <div class="card-rise hc-progress-bar">
+        <div class="hc-progress hidden"></div><p>Topic 2</p>
+      </div>
+      <div class="card-rise hc-progress-bar">
+        <div class="hc-progress hidden"></div><p>Topic 3</p>
+      </div>
+      <div class="card-rise hc-progress-bar">
+        <div class="hc-progress hidden"></div><p>Topic 4</p>
+      </div>
+      <div class="card-rise hc-progress-bar">
+        <div class="hc-progress hidden"></div><p>Topic 5</p>
+      </div>
+      <div class="card-rise hc-progress-bar">
+        <div class="hc-progress hidden"></div><p>Topic 6</p>
+      </div>
+
+      <div class="hc-results-actions-wrapper card-rise gone hidden">
+        <div class="hc-results-header">
+          <h2>Want More Detail?</h2>
+          <p>Using your Health Check responses as a guide, Sophity will create and send you a personalized Professional Services Road Map, and contact you for a free 1-hour consultation to discuss your results.</p>
+          <p>Introduce yourself below to request your Road Map.</p>
+        </div>
+        <div class="hc-user-info gone hidden" id="hc-user-info">
           <label for="hc-user-name" >Name</label>
           <input type="text" name="hc-user-name" placeholder="Name">
           <label for="hc-user-title">Job Title</label>
