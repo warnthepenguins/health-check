@@ -22,6 +22,34 @@
 
 <body>
   <h1>Sophity Health Check</h1>
+
+  <section id="hc-results-section" class="hidden">
+    <div class="hc-results-wrapper">
+      <div class="card-rise">
+        <div class="hc-results-caption">Your Score</div>
+        <div class="hc-results-score">A</div>
+      </div>
+      <div class="hc-results-actions-wrapper card-rise-2">
+        <div class="hc-user-info gone" id="hc-user-info">
+          <label for="hc-user-name" >Name</label>
+          <input type="text" name="hc-user-name" placeholder="Name">
+          <label for="hc-user-title">Job Title</label>
+          <input type="text" name="hc-user-title" placeholder="Title">
+          <label for="hc-user-company">Company</label>
+          <input type="text" name="hc-user-company" placeholder="Company">
+          <label for="hc-user-phone">Phone Number</label>
+          <input type="text" name="hc-user-phone" placeholder="(123) 555-4567">
+          <div class="hc-phone-checkbox">
+            <input type="checkbox" class="hc-phone-inner" name="hc-user-contact-preference" value="checked">
+            <label class="hc-phone-inner" for="hc-user-contact-preference">I prefer email</label>
+          </div>
+          <input type="button" class="clickable" value="Request Report" id="hc-results-request">
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <section id="hc-question-section">
     <div class="hc-progress-bar card-fixed"><div class="hc-progress"></div><p>Question 1 of 45 (2%)</p></div>
 
@@ -54,7 +82,6 @@
 
   <div class="hc-button-wrapper">
     <input type="button" class="clickable" value="Continue" id="hc-button-next">
-    <span id="result"></span>
   </div> 
 
 

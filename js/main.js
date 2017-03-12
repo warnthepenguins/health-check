@@ -1,13 +1,14 @@
-var myQuestions = [];
-var myCurrentScreen = 0;
-var myCurrentTopQuestion = 0;
-var myReadyState = 0;
+var myQuestions = [],
+	mySections = [];
+var myCurrentScreen = 0,
+	myCurrentTopQuestion = 0,
+	myReadyState = 0;
 
-function UserInfo(name, email, company, title, phone) {
-	this.name = name;
+function UserInfo(email, name, title, company, phone) {
 	this.email = email;
-	this.company = company;
+	this.name = name;
 	this.title = title;
+	this.company = company;
 	this.phone = phone;
 }
 
@@ -47,7 +48,17 @@ function jumpToNextQuestion(myElement) {
 }
 
 function displayResults() {
-	window.localStorage.clear();
+	console.log("displayResults");
+
+	setTimeout(function() {document.getElementById("hc-results-section").classList.remove("hidden");},100);
+	document.getElementById("hc-results-section").classList.remove("gone");
+	document.getElementById("hc-question-section").classList.add("hidden");
+	document.getElementById("hc-question-section").classList.add("gone");
+	setTimeout(function() {document.getElementById("hc-user-info").classList.remove("gone")},1000);
+
+	document.getElementById("hc-results-request").addEventListener("click", function() {
+			window.localStorage.clear();
+		});
 }
 
 function displayNextQuestionSet() {
@@ -63,14 +74,16 @@ function displayNextQuestionSet() {
 		theQuestionSection,
 		theButton,
 		theProgressBar;
-		
+
+	window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+
+	console.log("displayNextQuestionSet: Screen #" + myCurrentScreen + " out of " + myQuestions[myQuestions.length - 1].screen);
 	if (myCurrentScreen === myQuestions[myQuestions.length - 1].screen) {
 		displayResults();
 		return;
 	}
 
 	myCurrentScreen++;
-	window.scroll({ top: 0, left: 0, behavior: 'smooth' });
 
 	theQuestionSection = document.getElementById("hc-question-section");
 
@@ -191,6 +204,7 @@ function checkAnswers() {
 	//Validate current set of responses; flag unanswered questions; returns 0 (error) or 1 (okay)
 	var myAnswerSet = document.getElementsByClassName("hc-answer-key"),
 		myTopUncheckedAnswer = null;
+
 	[].forEach.call(myAnswerSet, function(element, index) {
 		var isChecked = 0;
 		[].forEach.call(element.getElementsByTagName("input"), function(innerElement) {
@@ -238,7 +252,7 @@ function scrapeAnswers() {
 
 function recoverLocalData() {
 	if (localStorage.getItem('myCurrentScreen') > 0) {
-		myCurrentScreen = localStorage.getItem('myCurrentScreen');
+		myCurrentScreen = Number(localStorage.getItem('myCurrentScreen'));
 		console.log("Recovering " + myCurrentScreen + " screens...");
 
 		if (localStorage.getItem('theQuestionSection')) {
@@ -248,7 +262,7 @@ function recoverLocalData() {
 
 		for (var i = 0; i < myQuestions.length; i++) {
 			if (localStorage.getItem('answer' + i) ) {
-				myQuestions[i].answer = localStorage.getItem('answer' + i);
+				myQuestions[i].answer = Number(localStorage.getItem('answer' + i));
 				console.log(i + ": " + myQuestions[i].answer);
 			} else {
 				i = myQuestions.length;
@@ -256,6 +270,19 @@ function recoverLocalData() {
 		}
 	}
 	myReadyState++;
+}
+
+function beginSurvey() {
+	document.getElementById("hc-button-next").addEventListener("click", function() {
+		if (myCurrentTopQuestion === myQuestions.length) {
+//			displayResults();
+		} else if (checkAnswers()) {
+			scrapeAnswers();
+			displayNextQuestionSet();
+		}
+	});
+
+	displayNextQuestionSet();
 }
 
 function waitUntilReady(callback) {
@@ -277,16 +304,7 @@ function loadQuestions() {
 
 	recoverLocalData();
 
-	waitUntilReady(displayNextQuestionSet);
-
-	document.getElementById("hc-button-next").addEventListener("click", function() {
-		if (myCurrentTopQuestion === myQuestions.length) {
-//			displayResults();
-		} else if (checkAnswers()) {
-			scrapeAnswers();
-			displayNextQuestionSet();
-		}
-	});
+	waitUntilReady(beginSurvey);
 
 	//note: should have error trapping, to be implemented
 }
