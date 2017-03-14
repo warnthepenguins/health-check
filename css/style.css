@@ -26,13 +26,27 @@ body {
 }
 
 h1 {
+  background: #eee;
+  color: rgba(0,0,0,0.85);
+  padding: 1.5em;
+  margin-top: 0;
   text-align: center;
+}
+
+h2 {
+  color: black;
+  padding: 0.5em;
+  font-size: 1.9em;
+  text-align: center;
+  font-weight: normal;
+  font-family: serif;
+  margin: 0;
 }
 
 section {
   font-family: sans-serif;
   display: block;
-  max-width: 600px;
+  max-width: 800px;
   width: 90%;
   margin: 0 auto 50px;
   /*transition: all 1.5s ease-in-out;*/
@@ -58,7 +72,7 @@ section {
   border: 0px;
   font-color: black;
   opacity: 1;
-  background: #2E7D32;
+  background: rgba(0, 230, 118, 0.75);
   transition: background 2.4s ease-in-out,
               opacity 2.4s ease-in-out,
               padding-top 1.2s ease-in-out,
@@ -102,8 +116,9 @@ section {
   height: 1em;
   font-weight: bold;
   color: rgba(0,0,0,0.7);
-  position: relative;
-  margin-top: calc(-2em);
+  transform: scale(1);
+  /*position: relative;*/
+  margin-top: -2em;
   text-align: center;
 }
 
@@ -176,14 +191,14 @@ section {
 }
 
 .hc-progress {
-  transform: scaleX(1);
+  transform: scaleX(0.03);
   width: 100%;
   height: 100%;
   border-radius: inherit;
   position: relative;
   background: #00E676;
   overflow: visible;
-  transition: transform 1.5s ease-in-out;
+  transition: transform 2s ease-in-out;
 }
 
 #hc-question-section .hc-progress-bar p {
@@ -194,6 +209,12 @@ section {
   position: relative;
   margin-top: calc(-2em);
   text-align: center;
+}
+
+#hc-question-section .hc-topic-header {
+  background: rgba(0, 230, 118, 0.75);
+  padding: 0.5em 5% 0.5em;
+  margin-bottom: 0;
 }
 
 .hc-question-group {
@@ -427,7 +448,22 @@ section {
   }
 }
 
+@media screen and (max-width: 800px) {
+  section {
+    width: 100%;
+    margin-bottom: 0px;
+  }
+
+  #hc-results-section .hc-progress-bar p {
+    transform: scale(0.85);
+  }
+}
+
 @media screen and (max-width: 400px) {
+  #hc-results-section .hc-progress-bar p {
+    transform: scale(0.6);
+  }
+
   .hc-answer-wrapper {
     flex-flow: column nowrap;
   }

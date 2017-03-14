@@ -67,8 +67,11 @@ function calculateScores(callback) {
 	//crunch numbers to calc results
 	var indexTopic = 0,
 		countQuestionsInTopic = 0;
+
+	console.log("calculateScores");
 	if (!(myTopics.length > 0)) {
 		myTopics.push(new Topic(0, "Total Score", 0));
+		console.log("WARNING: myTopics is empty!");
 	}
 	for (var i = 0; i < myQuestions.length; i++) {
 		if (indexTopic === myQuestions[i].topic) {
@@ -81,7 +84,11 @@ function calculateScores(callback) {
 			}
 			indexTopic = myQuestions[i].topic;
 			countQuestionsInTopic = 1;
-			myTopics.push(new Topic(indexTopic, "Topic " + indexTopic, myQuestions[i].answer));
+			if (myTopics.length < indexTopic) {
+				myTopics.push(new Topic(indexTopic, "Topic " + indexTopic, myQuestions[i].answer));
+			} else {
+				myTopics[indexTopic].score = myQuestions[i].answer;
+			}
 		}
 	}
 	myTopics[indexTopic].score = myTopics[indexTopic].score / countQuestionsInTopic;
@@ -95,10 +102,11 @@ function calculateScores(callback) {
 function showScores() {
 	//set topic score bars
 	[].forEach.call(document.getElementById("hc-results-section").getElementsByClassName("hc-progress"), function(element, index) {
-		toggleVisibility(element);
+		// toggleVisibility(element);
 		console.log("Showing bar for topic #" + index + "...");
+		element.nextElementSibling.innerHTML = myTopics[index + 1].name;
 		element.style.transform = "scaleX(" + (1 / (6 - myTopics[index + 1].score)) + ")";
-		element.style.transition = "transform 1.5s ease-in-out";
+		element.style.transition = "transform 2s ease-in-out";
 		if (myTopics[index + 1].score < 4) {
 //			console.log(element);
 			element.classList.add("warning");
@@ -162,7 +170,8 @@ function displayNextQuestionSet() {
 		theQuestionTemplate,
 		theQuestionSection,
 		theButton,
-		theProgressBar;
+		theProgressBar,
+		theTopicHeader;
 
 	window.scroll({ top: 0, left: 0, behavior: 'smooth' });
 
@@ -183,7 +192,9 @@ function displayNextQuestionSet() {
 
 	theQuestionTemplate = theQuestionSection.removeChild(document.getElementById("hc-question-1"));
 	theButton = theQuestionSection.removeChild(document.getElementsByClassName("hc-button-wrapper")[0]);
-	theProgressBar = theQuestionSection.removeChild(theQuestionSection.getElementsByClassName("hc-progress-bar")[0]);
+	theTopicHeader = theQuestionSection.getElementsByClassName("hc-topic-header")[0];
+	theProgressBar = theTopicHeader.removeChild(theTopicHeader.getElementsByClassName("hc-progress-bar")[0]);
+	theTopicHeader = theQuestionSection.removeChild(theTopicHeader);
 	theQuestionSection.innerHTML = "";
 
 	myQuestions.forEach(function(element) {
@@ -220,7 +231,35 @@ function displayNextQuestionSet() {
 
 	document.getElementById("hc-question-1").getElementsByClassName("hc-answer-key")[0].getElementsByTagName("input")[2].focus();
 
-	theProgressBar = theQuestionSection.insertBefore(theProgressBar, theQuestionSection.firstElementChild);
+	switch (tempNumber = myTopics[myQuestions[myCurrentTopQuestion - 1].topic].index) {
+		case 1: tempNumber = "I";
+			break;
+		case 2: tempNumber = "II";
+			break;
+		case 3: tempNumber = "III";
+			break;
+		case 4: tempNumber = "IV";
+			break;
+		case 5: tempNumber = "V";
+			break;
+		case 6: tempNumber = "VI";
+			break;
+		case 7: tempNumber = "VII";
+			break;
+		case 8: tempNumber = "IIX";
+			break;
+		case 9: tempNumber = "IX";
+			break;
+		case 10: tempNumber = "X";
+			break;
+		default: tempNumber = tempNumber;
+	}
+
+	theTopicHeader = theQuestionSection.insertBefore(theTopicHeader, theQuestionSection.firstElementChild);
+	theTopicHeader.getElementsByTagName("h2")[0].innerHTML = "";
+	theTopicHeader.getElementsByTagName("h2")[0].appendChild(document.createTextNode(tempNumber + " \u2219 " + myTopics[myQuestions[myCurrentTopQuestion - 1].topic].name));
+
+	theProgressBar = theTopicHeader.appendChild(theProgressBar);
 	theProgressBar.getElementsByClassName("hc-progress")[0].style.width = (1 + (99 * myCurrentTopQuestion / myQuestions.length)) + "%";
 	theProgressBar.getElementsByTagName("p")[0].innerHTML = "";
 	theProgressBar.getElementsByTagName("p")[0].appendChild(document.createTextNode(myCurrentTopQuestion + " of " + myQuestions.length + " completed (" + Math.trunc(1 + (99 * myCurrentTopQuestion / myQuestions.length)) + "%)"));
@@ -228,6 +267,31 @@ function displayNextQuestionSet() {
 	theButton = theQuestionSection.appendChild(theButton);
 	localStorage.setItem('theQuestionSection',theQuestionSection.innerHTML);
 
+}
+
+function storeLoadedTopics(rawText) {
+	var myArray = rawText.split('\n');
+
+	myArray = myArray.map(function(element, index, array) {
+		var tempTopicArray = element.split('\t');
+		tempTopicArray[0] = Number(tempTopicArray[0]);
+		return tempTopicArray;
+	});
+
+	while (myArray[myArray.length - 1][0] === 0 || isNaN(myArray[myArray.length - 1][0])) {
+		console.log(myArray.pop() + " removed from end of array");
+	}
+
+	if (!(myTopics.length < 0)) {
+		console.log("Topics list empty, creating list");
+		myTopics.push(new Topic(0, "Total Score", 0));
+		for (var i = 1; i <= myArray.length; i++) {
+			myTopics.push(new Topic(myArray[i - 1][0], myArray[i - 1][1], 0));
+		}
+	}
+
+
+	myReadyState++;
 }
 
 function storeLoadedQuestions(rawText) {
@@ -391,8 +455,10 @@ function loadQuestions() {
 
 	readFile("data/hc_questions_v2.0.txt", storeLoadedQuestions);
 	readFile("data/hc_question_numbers_v2.0.csv", storeLoadedQuestionNumbers);
+	readFile("data/hc_topics_v2.0.txt", storeLoadedTopics);
 
-	waitUntilReady(2, function() {
+	waitUntilReady(3, function() {
+		console.log("Data loaded, getting started.");
 		recoverLocalData(beginSurvey);
 	});
 
