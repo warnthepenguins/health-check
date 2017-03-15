@@ -6,14 +6,17 @@
 ---Off-white cards---
   background: #eee;
 
+---Dull green backing panels for emphasis---
+  background: #A5D6A7;
+
 ---Accent-green progress bars---
   background: #00E676;
 
 ---Yellow warnings---
   background: #FFE57F;
 
----Dark green results panel---
-  background: #2E7D32;
+---Red warnings---
+  background: #FF9E80;
 
 */
 
@@ -29,7 +32,7 @@ h1 {
   background: #eee;
   color: rgba(0,0,0,0.85);
   padding: 1.5em;
-  margin-top: 0;
+  margin: 0 auto;
   text-align: center;
 }
 
@@ -48,7 +51,7 @@ section {
   display: block;
   max-width: 800px;
   width: 90%;
-  margin: 0 auto 50px;
+  margin: 1.5em auto 3em;
   /*transition: all 1.5s ease-in-out;*/
 }
 
@@ -66,13 +69,13 @@ section {
 .hc-results-wrapper {
   width: 100%;
   /*height: 100em;*/
-  padding: 3em 5% 1em;
+  padding: 4.5em 5% 3em;
   border-radius: .5vh;
   border-style: none;
   border: 0px;
   font-color: black;
   opacity: 1;
-  background: rgba(0, 230, 118, 0.75);
+  background: #A5D6A7;
   transition: background 2.4s ease-in-out,
               opacity 2.4s ease-in-out,
               padding-top 1.2s ease-in-out,
@@ -108,6 +111,7 @@ section {
   height: 3em;
   padding: 0;
   margin-bottom: 0.75em;
+  overflow: hidden;
 }
 
 #hc-results-section .hc-progress-bar p {
@@ -123,7 +127,7 @@ section {
 }
 
 #hc-results-section .hc-progress-bar:nth-last-child(2) {
-  margin-bottom: 2em;
+  margin-bottom: 4em;
 }
 
 .hc-results-header {
@@ -133,6 +137,10 @@ section {
 
 .hc-results-header h2 {
   text-align: center;
+}
+
+.hc-results-header p:nth-last-of-type(1) {
+  margin-bottom: 2em;
 }
 
 .hc-results-actions-wrapper label,
@@ -169,7 +177,7 @@ section {
 }
 
 .hc-results-actions-wrapper .clickable {
-  margin: 1em auto;
+  margin: 2.5em auto 0.5em;
   text-align: center;
   padding: 0.5em 0 0.5em;
   width: 100%;
@@ -188,6 +196,7 @@ section {
 
 #hc-question-section .hc-progress-bar {
   height: 3em;
+  overflow: hidden;
 }
 
 .hc-progress {
@@ -199,6 +208,7 @@ section {
   background: #00E676;
   overflow: visible;
   transition: transform 2s ease-in-out;
+  margin-left: -50%;
 }
 
 #hc-question-section .hc-progress-bar p {
@@ -212,9 +222,9 @@ section {
 }
 
 #hc-question-section .hc-topic-header {
-  background: rgba(0, 230, 118, 0.75);
+  background: #A5D6A7;
   padding: 0.5em 5% 0.5em;
-  margin-bottom: 0;
+  margin-bottom: 1em;
 }
 
 .hc-question-group {
@@ -367,7 +377,7 @@ section {
   border-style: none;
   color: black;
   font-weight: bold;
-  background: #66BB6A;
+  background: #00E676;
 }
 
 .hc-button-wrapper input:focus {
@@ -428,7 +438,11 @@ section {
 .warning {
   background: #FFE57F;
   transition: background 1.5s ease-in-out;
+}
 
+.warning-strong {
+  background: #FF9E80;
+  transition: background 1.5s ease-in-out;
 }
 
 /*.card-5 {
@@ -451,17 +465,17 @@ section {
 @media screen and (max-width: 800px) {
   section {
     width: 100%;
-    margin-bottom: 0px;
+    margin: 0 auto;
   }
 
   #hc-results-section .hc-progress-bar p {
-    transform: scale(0.85);
+    margin-top: -2.3em;
   }
 }
 
 @media screen and (max-width: 400px) {
   #hc-results-section .hc-progress-bar p {
-    transform: scale(0.6);
+    margin-top: -2.4em;
   }
 
   .hc-answer-wrapper {

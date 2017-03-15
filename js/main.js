@@ -32,7 +32,7 @@ function jumpToNextQuestion(myElement) {
 	if (myNextQuestion) {
 		if (myElement.parentNode.getAttribute("data-scrolled") === "false") {
 			window.scroll({ top: myNextQuestion.getBoundingClientRect().top + window.scrollY, left: 0, behavior: 'smooth' });
-			myNextQuestion = myNextQuestion.getElementsByClassName("hc-answer-key")[0].getElementsByTagName("input")[2];
+			myNextQuestion = myNextQuestion.getElementsByClassName("hc-answer-key")[0].getElementsByTagName("input")[0];
 			myNextQuestion.focus();
 			myElement.parentNode.setAttribute("data-scrolled", "true");
 		}
@@ -100,44 +100,48 @@ function calculateScores(callback) {
 }
 
 function showScores() {
+	var myScoreBox = document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0];
+
 	//set topic score bars
 	[].forEach.call(document.getElementById("hc-results-section").getElementsByClassName("hc-progress"), function(element, index) {
 		// toggleVisibility(element);
 		console.log("Showing bar for topic #" + index + "...");
 		element.nextElementSibling.innerHTML = myTopics[index + 1].name;
-		element.style.transform = "scaleX(" + (1 / (6 - myTopics[index + 1].score)) + ")";
+		element.style.transform = "scaleX(" + (0.5 * (myTopics[index + 1].score) + 0.02) + ")";
 		element.style.transition = "transform 2s ease-in-out";
-		if (myTopics[index + 1].score < 4) {
+		if (myTopics[index + 1].score < 3 && myTopics[index + 1].score >= 2) {
 //			console.log(element);
 			element.classList.add("warning");
+		} else if (myTopics[index + 1].score < 2) {
+			element.classList.add("warning-strong");
 		}
 	});
-	if (myTopics[0].score >= 4.7) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "A+";
-	} else if (myTopics[0].score >= 4.2) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "A";
-	} else if (myTopics[0].score >= 4.0) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "A-";
-	} else if (myTopics[0].score >= 3.7) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "B+";
-	} else if (myTopics[0].score >= 3.2) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "B";
+	if (myTopics[0].score >= 3.9) {
+		myScoreBox.innerHTML = "A+";
+	} else if (myTopics[0].score >= 3.4) {
+		myScoreBox.innerHTML = "A";
 	} else if (myTopics[0].score >= 3.0) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "B-";
-	} else if (myTopics[0].score >= 2.7) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "C+";
-	} else if (myTopics[0].score >= 2.2) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "C";
+		myScoreBox.innerHTML = "A-";
+	} else if (myTopics[0].score >= 3.9) {
+		myScoreBox.innerHTML = "B+";
+	} else if (myTopics[0].score >= 3.4) {
+		myScoreBox.innerHTML = "B";
+	} else if (myTopics[0].score >= 3.0) {
+		myScoreBox.innerHTML = "B-";
+	} else if (myTopics[0].score >= 2.9) {
+		myScoreBox.innerHTML = "C+";
+	} else if (myTopics[0].score >= 2.4) {
+		myScoreBox.innerHTML = "C";
 	} else if (myTopics[0].score >= 2.0) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "C-";
-	} else if (myTopics[0].score >= 1.7) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "D+";
-	} else if (myTopics[0].score >= 1.2) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "D";
+		myScoreBox.innerHTML = "C-";
+	} else if (myTopics[0].score >= 1.9) {
+		myScoreBox.innerHTML = "D+";
+	} else if (myTopics[0].score >= 1.4) {
+		myScoreBox.innerHTML = "D";
 	} else if (myTopics[0].score >= 1.0) {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "D-";
+		myScoreBox.innerHTML = "D-";
 	} else {
-		document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0].innerHTML = "F";
+		myScoreBox.innerHTML = "F";
 	}
 }
 
@@ -229,7 +233,7 @@ function displayNextQuestionSet() {
 		}
 	});
 
-	document.getElementById("hc-question-1").getElementsByClassName("hc-answer-key")[0].getElementsByTagName("input")[2].focus();
+	document.getElementById("hc-question-1").getElementsByClassName("hc-answer-key")[0].getElementsByTagName("input")[0].focus();
 
 	switch (tempNumber = myTopics[myQuestions[myCurrentTopQuestion - 1].topic].index) {
 		case 1: tempNumber = "I";
@@ -259,8 +263,15 @@ function displayNextQuestionSet() {
 	theTopicHeader.getElementsByTagName("h2")[0].innerHTML = "";
 	theTopicHeader.getElementsByTagName("h2")[0].appendChild(document.createTextNode(tempNumber + " \u2219 " + myTopics[myQuestions[myCurrentTopQuestion - 1].topic].name));
 
+	if (myCurrentScreen === 2) {
+		toggleVisibility(theProgressBar, 1);
+	}
+
+	tempNumber = (myCurrentTopQuestion / myQuestions.length) * 2;
 	theProgressBar = theTopicHeader.appendChild(theProgressBar);
-	theProgressBar.getElementsByClassName("hc-progress")[0].style.width = (1 + (99 * myCurrentTopQuestion / myQuestions.length)) + "%";
+	console.log(theProgressBar);
+	// theProgressBar.getElementsByClassName("hc-progress")[0].style.marginLeft = ((Number(theProgressBar.getElementsByClassName("hc-progress")[0].offsetWidth) * -(1 - tempNumber) + 1)) + "px";
+	theProgressBar.getElementsByClassName("hc-progress")[0].style.transform = "scaleX(" + tempNumber + ")";
 	theProgressBar.getElementsByTagName("p")[0].innerHTML = "";
 	theProgressBar.getElementsByTagName("p")[0].appendChild(document.createTextNode(myCurrentTopQuestion + " of " + myQuestions.length + " completed (" + Math.trunc(1 + (99 * myCurrentTopQuestion / myQuestions.length)) + "%)"));
 
@@ -290,8 +301,8 @@ function storeLoadedTopics(rawText) {
 		}
 	}
 
-
 	myReadyState++;
+	console.log(myReadyState);
 }
 
 function storeLoadedQuestions(rawText) {
@@ -313,6 +324,7 @@ function storeLoadedQuestions(rawText) {
 		}
 	});
 	myReadyState++;
+	console.log(myReadyState);
 }
 
 function storeLoadedQuestionNumbers(rawText) {
@@ -339,6 +351,7 @@ function storeLoadedQuestionNumbers(rawText) {
 		}
 	});
 	myReadyState++;
+	console.log(myReadyState);
 }
 
 function readFile(url, callback) {
@@ -440,14 +453,14 @@ function beginSurvey() {
 	displayNextQuestionSet();
 }
 
-function waitUntilReady(howMany, callback) {
+function waitUntilReady(howMany, ticks, callback) {
 	setTimeout(function() {
-		if (myReadyState >= howMany) {
+		if (myReadyState >= howMany || ticks <= 0) {
 			callback();
 		} else {
-			waitUntilReady(callback);
+			waitUntilReady(3, ticks - 1, callback);
 		}
-	}, 50);
+	}, 100);
 }
 
 function loadQuestions() {
@@ -457,7 +470,9 @@ function loadQuestions() {
 	readFile("data/hc_question_numbers_v2.0.csv", storeLoadedQuestionNumbers);
 	readFile("data/hc_topics_v2.0.txt", storeLoadedTopics);
 
-	waitUntilReady(3, function() {
+	console.log(myReadyState + " is the current ready state");
+	waitUntilReady(3, 100, function() {
+		console.log(myReadyState + " is the current ready state");
 		console.log("Data loaded, getting started.");
 		recoverLocalData(beginSurvey);
 	});
