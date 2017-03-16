@@ -1,4 +1,4 @@
- var myQuestions = [],
+var myQuestions = [],
 	myTopics = [];
 var myCurrentScreen = 0,
 	myCurrentTopQuestion = 0,
@@ -10,12 +10,13 @@ function Topic(index, name, score) {
 	this.score = score;
 }
 
-function UserInfo(email, name, title, company, phone) {
+function UserInfo(email, name, title, company, phone, contact_preference = "phone") {
 	this.email = email;
 	this.name = name;
 	this.title = title;
 	this.company = company;
 	this.phone = phone;
+	this.contact_preference = contact_preference;
 }
 
 function Question(number, text, topic, screen, answer) {
@@ -25,6 +26,12 @@ function Question(number, text, topic, screen, answer) {
 	this.screen = screen;
 	this.answer = answer;
 }
+
+// The POST will include these JSON objects:
+// User { email, name, title, company, phone, contact_preference }
+// Scores { all_topic_scores, how_many_scores, total_score, version, how_many_questions }
+// A serialized string of Questions --- "number~text~topic~answer\nnumber~text~topic~answer..."
+
 
 function jumpToNextQuestion(myElement) {
 	var myQuestionNumber = 1 + Number(myElement.getAttribute("name").replace(/hc-answers-/,""));
