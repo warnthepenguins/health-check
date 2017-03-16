@@ -1,4 +1,4 @@
-var myQuestions = [],
+ var myQuestions = [],
 	myTopics = [];
 var myCurrentScreen = 0,
 	myCurrentTopQuestion = 0,

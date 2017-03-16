@@ -129,11 +129,12 @@ Color: #000000;
 body {
   background: #ffffff;
   font-family: 'Lato', sans-serif;
+  font-size: 33.333333px;
 }
 
 h1 {
-  font-family: 'Lato', sans-serif;
-  font-size: 33.333333px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1em;
   background: #eee;
   color: rgba(0,0,0,0.85);
   padding: 1.5em;
@@ -142,19 +143,20 @@ h1 {
 }
 
 h2 {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Lato', sans-serif;
   color: black;
   padding: 0.5em;
   font-size: 1.9em;
   text-align: center;
   font-weight: normal;
-  font-family: serif;
+  /*font-family: serif;*/
   margin: 0;
 }
 
 section {
   font-family: 'Lato', sans-serif;
   display: block;
+  font-size: 0.5em;
   max-width: 800px;
   width: 90%;
   margin: 1.5em auto 3em;
@@ -181,7 +183,7 @@ section {
   border: 0px;
   font-color: black;
   opacity: 1;
-  background: #A5D6A7; /*Hi John! Yes, it's this one.*/
+  background: #A5D6A7;
   transition: background 2.4s ease-in-out,
               opacity 2.4s ease-in-out,
               padding-top 1.2s ease-in-out,
@@ -201,16 +203,17 @@ section {
 }
 
 .hc-results-caption {
-  font-variant: small-caps;
-  font-size: .9em;
+  font-size: 1em;
+  font-family: 'Poppins',sans-serif;
   text-align: center;
   color: rgba(0,0,0,0.75);
 }
 
 .hc-results-score {
   text-align: center;
-  font-size: calc(2.5vw + 6em);
+  font-size: calc(4vw + 8em);
   font-weight: bold;
+  font-family: 'Poppins', sans-serif;
 }
 
 #hc-results-section .hc-progress-bar {
@@ -256,7 +259,7 @@ section {
 }
 
 .hc-results-actions-wrapper label {
-  font-variant: small-caps;
+  font-family: 'Poppins', sans-serif;
   font-size: 0.8em;
   color: rgba(0,0,0,0.8);
   margin-top: 0.75em;
@@ -285,7 +288,7 @@ section {
 .hc-results-actions-wrapper .clickable {
   margin: 2.5em auto 0.5em;
   text-align: center;
-  padding: 0.5em 0 0.5em;
+  padding: 0.75em 0 0.75em;
   width: 100%;
   overflow: visible;
   overflow-wrap: break-word;
@@ -346,8 +349,9 @@ section {
   width: 100%;
   display: flex;
   flex-flow: row wrap;
-  align-items: baseline;
+  align-items: stretch;
   justify-content: center;
+  padding-top: 3.5vw;
 }
 
 .hc-question-link {
@@ -356,22 +360,24 @@ section {
 }
 
 .hc-question-wrapper .hc-question-number {
-  display: inline-block;
+  display: block;
   font-family: 'Poppins', sans-serif;
-
-  font-size: 150%;
+  font-size: 1.25em;
   /*width: 2.2em;*/
   /*height: 2em;*/
-  border-radius: 45%;
-  padding: 0.2em;
+  width: 5%;
+  border-radius: 4px;
+  padding: 0.5em 0.5% 0.25em;
   background: #ddd;
   color: black;
   text-align: center;
-  margin-left: 1vw;
+  margin-left: 1%;
+  font-weight: bold;
+  color: rgba(0,0,0,0.85);
 }
 
 .hc-question-wrapper .hc-question-text {
-  width: calc(100% - 2.4em);
+  width: 90%;
   padding: 3.5vw 3.5vw 2.5vw 2vw;
   line-height: 1.5em;
   font-size: 1.15em;
@@ -383,20 +389,17 @@ section {
 }*/
 
 .hc-answer-wrapper {
-  font-family: sans-serif;
-  font-variant: small-caps;
-  font-size: .9em;
   display: flex;
   flex-flow: row wrap;
   align-items: center;
   justify-content: center;
+  font-family: 'Poppins', sans-serif;
 }
 
 .hc-answer-wrapper .hc-answer-prompt {
   text-align: right;
-  font-size: .85em;
   color: rgba(0,0,0,0.33);
-  padding: 5px;
+  padding: 0.75em 0 0.25em;
 }
 
 .hc-answer-key {
@@ -405,8 +408,7 @@ section {
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: stretch;
-  font-family: sans-serif;
-  font-size: 3vw;
+  /*font-size: 3.5em;*/
   border-radius: .5vh;
   width: 90%;
   margin-left: auto;
@@ -430,18 +432,17 @@ section {
 }
 
 .hc-answer-key label {
-  color: rgba(0,0,0,.9);
-  font-variant: small-caps;
   width: 20%;
-  padding: 8px;
+  padding: 1em 2% 0.85em;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  max-height: 3em;
+  max-height: 3.5em;
   background: #ddd;
-  opacity: 0.8;
   box-shadow: none;
+  font-weight: bold;
+  font-size: 0.85em;
 }
 
 .hc-answer-key label:first-of-type {
@@ -450,13 +451,13 @@ section {
 
 .hc-answer-key label:last-of-type {
   border-radius: 0% .5vh .5vh 0%;
+  text-align: right;
 }
 
 .hc-answer-key input:hover + label{
   /*font-weight: bold;*/
   background: #EEE;
   color: black;
-  opacity: 1;
 }
 
 .hc-answer-key input:checked + label,
@@ -472,7 +473,7 @@ section {
   width: 100%;
   height: 5em;
   line-height: 1.5em;
-  font-size: 1.15em;
+  font-size: 1.5em;
   text-align: center;
 }
 
@@ -515,7 +516,8 @@ section {
 
 .clickable {
   font-family: 'Poppins', sans-serif;
-  font-variant: small-caps;
+  font-weight: bold;
+  color: rgba(0,0,0,0.85);
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
@@ -558,21 +560,15 @@ section {
 }*/
 
 
-@media screen and (min-width: 600px) {
-  .hc-answer-key {
-    font-size: 1em;
-  }
-}
-
-@media screen and (min-width: 401px) {
+@media screen and (min-width: 601px) {
   .hc-answer-key label:nth-of-type(n + 2) {
     margin-left: 1px;
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 900px) {
   section {
-    width: 100%;
+    width: 95%;
     margin: 0 auto;
   }
 
@@ -581,7 +577,12 @@ section {
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 600px) {
+  .hc-question-wrapper .hc-question-number {
+    font-size: 0.8em;
+    /*padding-top: 3.6em;*/
+  }
+
   #hc-results-section .hc-progress-bar p {
     margin-top: -2.4em;
   }
@@ -602,7 +603,7 @@ section {
     width: 100%;
     height: 20%;
     max-height: 2em;
-    font-size: 1.75em;
+    /*font-size: 1.75em;*/
   }
 
   .hc-answer-key label:nth-last-of-type(n + 2) {
