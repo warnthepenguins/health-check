@@ -142,6 +142,17 @@ h1 {
   text-align: center;
 }
 
+.top-bar {
+  width: 100%;
+  padding-top: 2%;
+}
+
+.sophity-image {
+  width: 100%;
+  display: inline-block;
+  text-align: center;
+}
+
 h2 {
   font-family: 'Lato', sans-serif;
   color: black;
