@@ -357,6 +357,7 @@ function storeLoadedQuestionNumbers(rawText) {
 			myQuestions.push(new Question(element[0], "", element[1], element[2], 0));
 		}
 	});
+	//checkReadyState
 	myReadyState++;
 	console.log(myReadyState);
 }
