@@ -30,7 +30,7 @@ function Question(number, text, topic, screen, answer) {
 // The POST will include these JSON objects:
 // User { email, name, title, company, phone, contact_preference }
 // Scores { all_topic_scores, how_many_scores, total_score, version, how_many_questions }
-// A serialized string of Questions --- "number~text~topic~answer\nnumber~text~topic~answer..."
+// A serialized string of Questions --- "number\ttext\ttopic\tanswer\nnumber\ttext\ttopic\tanswer..."
 
 
 function jumpToNextQuestion(myElement) {

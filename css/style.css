@@ -389,6 +389,7 @@ section {
 }*/
 
 .hc-answer-wrapper {
+  margin-left: 3.5vw;
   display: flex;
   flex-flow: row wrap;
   align-items: center;
@@ -397,7 +398,6 @@ section {
 }
 
 .hc-answer-wrapper .hc-answer-prompt {
-  text-align: right;
   color: rgba(0,0,0,0.33);
   padding: 0.75em 0 0.25em;
 }
@@ -411,8 +411,6 @@ section {
   /*font-size: 3.5em;*/
   border-radius: .5vh;
   width: 90%;
-  margin-left: auto;
-  margin-right: auto;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
@@ -429,6 +427,9 @@ section {
   height: 0px;
   padding: 0px;
   margin: 0px;
+  position: absolute;
+  left: -9999px;
+  z-index: -1;
 }
 
 .hc-answer-key label {
