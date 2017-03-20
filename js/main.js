@@ -1,5 +1,6 @@
 var myQuestions = [],
-	myTopics = [];
+	myTopics = [],
+	myUser;
 var myCurrentScreen = 0,
 	myCurrentTopQuestion = 0,
 	myReadyState = 0;
@@ -10,13 +11,13 @@ function Topic(index, name, score) {
 	this.score = score;
 }
 
-function UserInfo(email, name, title, company, phone, contact_preference = "phone") {
+function UserInfo(email, name, title, company, phone, contact_preference) {
 	this.email = email;
 	this.name = name;
 	this.title = title;
 	this.company = company;
 	this.phone = phone;
-	this.contact_preference = contact_preference;
+	this.contact_preference = contact_preference || "phone";
 }
 
 function Question(number, text, topic, screen, answer) {
@@ -494,16 +495,16 @@ function createReport() {
 
 window.addEventListener("load", loadQuestions);
 
-/*function <<document load>> () { 
-	run loadQuestions; 
-	map showNextScreen function to NEXT button 
+/*function <<document load>> () {
+	run loadQuestions;
+	map showNextScreen function to NEXT button
 	somehow create myAnswers[] as an accessible global, or set up infrastructure to store it in db
 }*/
 
 
 
 
-//puzzle: 	how to preserve myAnswers[] as a global variable? 
+//puzzle: 	how to preserve myAnswers[] as a global variable?
 //			Should answer data be written directly to database as it's scraped?
 //				^probably, for saveability
 
@@ -515,4 +516,4 @@ window.addEventListener("load", loadQuestions);
 
 //puzz5		how to toggle display attribute?
 
-//puzz6		
+//puzz6
