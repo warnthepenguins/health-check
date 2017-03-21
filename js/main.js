@@ -153,6 +153,20 @@ function showScores() {
 	}
 }
 
+function postResultsToRailsApp() {
+	fetch('http://localhost:3000', {
+	  method: 'POST',
+	  headers: {
+	    'Content-Type': 'application/json'
+			// Access-Control-Allow-Origin header?
+	  },
+	  body: JSON.stringify({
+	    name: 'A_Name',
+	    email: 'An_Email'
+	  })
+	});
+}
+
 function displayResults() {
 	console.log("displayResults");
 
@@ -166,7 +180,8 @@ function displayResults() {
 	calculateScores(showScores);
 
 	document.getElementById("hc-results-request").addEventListener("click", function() {
-		window.localStorage.clear();
+		postResultsToRailsApp();
+		// window.localStorage.clear();
 	});
 }
 
@@ -487,10 +502,6 @@ function loadQuestions() {
 	});
 
 	//note: should have error trapping, to be implemented
-}
-
-function createReport() {
-
 }
 
 window.addEventListener("load", loadQuestions);
