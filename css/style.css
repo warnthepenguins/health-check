@@ -471,7 +471,7 @@ section {
 
 .hc-answer-key input:hover + label{
   /*font-weight: bold;*/
-  background: #EEE;
+  background: #FCFCFC;
   color: black;
 }
 

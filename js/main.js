@@ -5,6 +5,13 @@ var myCurrentScreen = 0,
 	myCurrentTopQuestion = 0,
 	myReadyState = 0;
 
+var myVersion = "2.0";
+
+function Meta(uuid, version) {
+	this.uuid = uuid;
+	this.version = version;
+}
+
 function Topic(index, name, score) {
 	this.index = index;
 	this.name = name;
@@ -153,18 +160,70 @@ function showScores() {
 	}
 }
 
-function postResultsToRailsApp() {
-	fetch('http://localhost:3000', {
-	  method: 'POST',
-	  headers: {
-	    'Content-Type': 'application/json'
-			// Access-Control-Allow-Origin header?
-	  },
-	  body: JSON.stringify({
-	    name: 'A_Name',
-	    email: 'An_Email'
-	  })
-	});
+function postQuizAndScores(postToUrl) {
+	var postRequest = new XMLHttpRequest();
+
+
+	var params =
+		"uuid=" + encodeURIComponent(document.getElementById('hc-session-id').innerHTML) + "&" +
+		"email=" + encodeURIComponent(document.getElementById('hc-user-email').innerHTML) + "&" +
+		"uname=" + encodeURIComponent(document.getElementsByName('hc-user-name')[0].value) + "&" +
+		"job_title=" + encodeURIComponent(document.getElementsByName('hc-user-title')[0].value) + "&" +
+		"company=" + encodeURIComponent(document.getElementsByName('hc-user-company')[0].value) + "&" +
+		"phone=" + encodeURIComponent(document.getElementsByName('hc-user-phone')[0].value) + "&" +
+		"contact_preference=" + encodeURIComponent(document.getElementsByName('hc-user-contact-preference')[0].value === 'checked' ? "email" : "phone");
+
+	postRequest.open("POST", postToUrl, true);
+	postRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	// http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	// postRequest.setRequestHeader("Content-length", params.length);
+	// postRequest.setRequestHeader("Connection", "close");
+
+	postRequest.onreadystatechange = function() {
+		if (postRequest.readyState === XMLHttpRequest.DONE && postRequest.status === 200) {
+			console.log(postRequest.responseText);
+			callback();
+		}
+	}
+
+	postRequest.send(params);
+	console.log(params);
+}
+
+function postUserInfo(postToUrl, callback) {
+	var postRequest = new XMLHttpRequest();
+	var params =
+		"uuid=" + encodeURIComponent(document.getElementById('hc-session-id').innerHTML) + "&" +
+		"email=" + encodeURIComponent(document.getElementById('hc-user-email').innerHTML) + "&" +
+		"uname=" + encodeURIComponent(document.getElementsByName('hc-user-name')[0].value) + "&" +
+		"job_title=" + encodeURIComponent(document.getElementsByName('hc-user-title')[0].value) + "&" +
+		"company=" + encodeURIComponent(document.getElementsByName('hc-user-company')[0].value) + "&" +
+		"phone=" + encodeURIComponent(document.getElementsByName('hc-user-phone')[0].value) + "&" +
+		"contact_preference=" + encodeURIComponent(document.getElementsByName('hc-user-contact-preference')[0].value === 'checked' ? "email" : "phone");
+
+	postRequest.open("POST", postToUrl, true);
+	postRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	// http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	// postRequest.setRequestHeader("Content-length", params.length);
+	// postRequest.setRequestHeader("Connection", "close");
+
+	postRequest.onreadystatechange = function() {
+		if (postRequest.readyState === XMLHttpRequest.DONE && postRequest.status === 200) {
+			console.log(postRequest.responseText);
+			callback();
+		}
+	}
+
+	postRequest.send(params);
+	console.log(params);
+}
+
+function replaceFormSubmit(ev) {
+		ev.preventDefault();
+		postUserInfo("report", function() {
+			window.location = "results";
+		});
+		// window.localStorage.clear();
 }
 
 function displayResults() {
@@ -178,11 +237,16 @@ function displayResults() {
 	//calculate!
 	console.log("Calculating...");
 	calculateScores(showScores);
+	postQuizAndScores("/results");
 
-	document.getElementById("hc-results-request").addEventListener("click", function() {
-		postResultsToRailsApp();
-		// window.localStorage.clear();
-	});
+	var reportButton = document.getElementById("hc-results-request");
+	reportButton.addEventListener('click', replaceFormSubmit);
+
+	// document.getElementById("hc-results-request").addEventListener("click", function() {
+	// 	ev.overrideDefaults();
+	// 	postUserInfo("/report");
+	// 	// window.localStorage.clear();
+	// });
 }
 
 function displayNextQuestionSet() {
@@ -490,9 +554,9 @@ function waitUntilReady(howMany, ticks, callback) {
 function loadQuestions() {
 	//Pull questions from the latest version hc_questions; metadata from the latest hc_question_numbers
 
-	readFile("data/hc_questions_v2.0.txt", storeLoadedQuestions);
-	readFile("data/hc_question_numbers_v2.0.csv", storeLoadedQuestionNumbers);
-	readFile("data/hc_topics_v2.0.txt", storeLoadedTopics);
+	readFile("data/hc_questions_v" + myVersion + ".txt", storeLoadedQuestions);
+	readFile("data/hc_question_numbers_v" + myVersion + ".csv", storeLoadedQuestionNumbers);
+	readFile("data/hc_topics_v" + myVersion + ".txt", storeLoadedTopics);
 
 	console.log(myReadyState + " is the current ready state");
 	waitUntilReady(3, 100, function() {
