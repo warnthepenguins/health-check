@@ -1,3 +1,8 @@
+require('./smoothscroll.js');
+require('./papaparse.min.js');
+
+var myVersion = "2.0";
+
 var myQuestions = [],
 	myTopics = [],
 	myUser;
@@ -5,7 +10,6 @@ var myCurrentScreen = 0,
 	myCurrentTopQuestion = 0,
 	myReadyState = 0;
 
-var myVersion = "2.0";
 
 function Meta(uuid, version) {
 	this.uuid = uuid;
@@ -68,7 +72,8 @@ function jumpToNextQuestion(myElement) {
 // 	//
 }
 
-function toggleVisibility(element, waitTime = 500) {
+function toggleVisibility(element, waitTime) {
+	waitTime = waitTime || 500;
 	if (element.classList.contains("gone") || element.classList.contains("hidden")) {
 		element.classList.remove("gone");
 		setTimeout(function() {element.classList.remove("hidden"); console.log(element.classList + " becomes visible");}, waitTime);
