@@ -1,9 +1,19 @@
+var papa = require('./papaparse.min.js');
+
+var myVersion = "2.0";
+
 var myQuestions = [],
-	myTopics = [],
-	myUser;
+	myTopics = [];
+
 var myCurrentScreen = 0,
 	myCurrentTopQuestion = 0,
 	myReadyState = 0;
+
+
+function Session(uuid, version) {
+	this.uuid = uuid;
+	this.version = version;
+}
 
 function Topic(index, name, score) {
 	this.index = index;
@@ -11,13 +21,22 @@ function Topic(index, name, score) {
 	this.score = score;
 }
 
-function UserInfo(email, name, title, company, phone, contact_preference) {
+function User(email, name, title, company, phone, contact_preference) {
 	this.email = email;
 	this.name = name;
 	this.title = title;
 	this.company = company;
 	this.phone = phone;
 	this.contact_preference = contact_preference || "phone";
+
+	return {
+		email,
+		name,
+		title,
+		company,
+		phone,
+		contact_preference
+	}
 }
 
 function Question(number, text, topic, screen, answer) {
@@ -61,7 +80,8 @@ function jumpToNextQuestion(myElement) {
 // 	//
 }
 
-function toggleVisibility(element, waitTime = 500) {
+function toggleVisibility(element, waitTime) {
+	waitTime = waitTime || 500;
 	if (element.classList.contains("gone") || element.classList.contains("hidden")) {
 		element.classList.remove("gone");
 		setTimeout(function() {element.classList.remove("hidden"); console.log(element.classList + " becomes visible");}, waitTime);
@@ -153,6 +173,104 @@ function showScores() {
 	}
 }
 
+function postQuizAndScores(postToUrl) {
+	var postRequest = new XMLHttpRequest();
+
+	var params =
+		"uuid=" + encodeURIComponent(document.getElementById('hc-session-id').innerHTML) + "&" +
+		"email=" + encodeURIComponent(document.getElementById('hc-user-email').innerHTML) + "&" +
+		"uname=" + encodeURIComponent(document.getElementsByName('hc-user-name')[0].value) + "&" +
+		"job_title=" + encodeURIComponent(document.getElementsByName('hc-user-title')[0].value) + "&" +
+		"company=" + encodeURIComponent(document.getElementsByName('hc-user-company')[0].value) + "&" +
+		"phone=" + encodeURIComponent(document.getElementsByName('hc-user-phone')[0].value) + "&" +
+		"contact_preference=" + encodeURIComponent(document.getElementsByName('hc-user-contact-preference')[0].value === 'checked' ? "email" : "phone");
+
+
+	postRequest.open("POST", postToUrl, true);
+	postRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	// http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	// postRequest.setRequestHeader("Content-length", params.length);
+	// postRequest.setRequestHeader("Connection", "close");
+
+	postRequest.onreadystatechange = function() {
+		if (postRequest.readyState === XMLHttpRequest.DONE && postRequest.status === 200) {
+			console.log(postRequest.responseText);
+			callback();
+		}
+	}
+
+	postRequest.send(params);
+	console.log(params);
+}
+
+function postUserInfo(postToUrl, callback) {
+	var postRequest = new XMLHttpRequest();
+	var params =
+		"uuid=" + encodeURIComponent(document.getElementById('hc-session-id').innerHTML) + "&" +
+		"email=" + encodeURIComponent(document.getElementById('hc-user-email').innerHTML) + "&" +
+		"uname=" + encodeURIComponent(document.getElementsByName('hc-user-name')[0].value) + "&" +
+		"job_title=" + encodeURIComponent(document.getElementsByName('hc-user-title')[0].value) + "&" +
+		"company=" + encodeURIComponent(document.getElementsByName('hc-user-company')[0].value) + "&" +
+		"phone=" + encodeURIComponent(document.getElementsByName('hc-user-phone')[0].value) + "&" +
+		"contact_preference=" + encodeURIComponent(document.getElementsByName('hc-user-contact-preference')[0].value === 'checked' ? "email" : "phone");
+
+	postRequest.open("POST", postToUrl, true);
+	postRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	// http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	// postRequest.setRequestHeader("Content-length", params.length);
+	// postRequest.setRequestHeader("Connection", "close");
+
+	postRequest.onreadystatechange = function() {
+		if (postRequest.readyState === XMLHttpRequest.DONE && postRequest.status === 200) {
+			console.log(postRequest.responseText);
+			callback();
+		}
+	}
+
+	postRequest.send(params);
+	console.log(params);
+}
+
+function writeUserToCSV (user, session, callback) {
+	csv = papa.parse ([session, user]);
+	console.log csv;
+}
+
+function createSessionObj () {
+	return Session (document.getElementById('hc-session-id').innerHTML, myVersion);
+}
+
+function createUserObjFromForm () {
+	return User (
+		document.getElementById('hc-user-email').innerHTML,
+		document.getElementsByName('hc-user-name')[0].value,
+		document.getElementsByName('hc-user-title')[0].value,
+		document.getElementsByName('hc-user-company')[0].value,
+		document.getElementsByName('hc-user-phone')[0].value,
+		document.getElementsByName('hc-user-contact-preference')[0].value === 'checked' ? "email" : "phone"
+	);
+}
+
+function replaceFormSubmit(ev) {
+	var userInfo, sessionInfo;
+
+		ev.preventDefault();
+
+		userInfo = createUserObjFromForm(),
+		sessionInfo = createSessionObj();
+
+		// write user data to csv at the uuid's row
+		writeUserToCSV(userInfo, sessionInfo, function() {
+			// Show PDF-able results page here -- lazy load it earlier?
+		});
+
+		window.localStorage.clear();
+}
+
+function writeScoresToCSV() {
+
+}
+
 function displayResults() {
 	console.log("displayResults");
 
@@ -164,10 +282,19 @@ function displayResults() {
 	//calculate!
 	console.log("Calculating...");
 	calculateScores(showScores);
+	// postQuizAndScores("/results");
 
-	document.getElementById("hc-results-request").addEventListener("click", function() {
-		window.localStorage.clear();
-	});
+	// Write scores to csv, at uuid loc row
+	writeScoresToCSV();
+
+	var reportButton = document.getElementById("hc-results-request");
+	reportButton.addEventListener('click', replaceFormSubmit);
+
+	// document.getElementById("hc-results-request").addEventListener("click", function() {
+	// 	ev.overrideDefaults();
+	// 	postUserInfo("/report");
+	// 	// window.localStorage.clear();
+	// });
 }
 
 function displayNextQuestionSet() {
@@ -475,9 +602,9 @@ function waitUntilReady(howMany, ticks, callback) {
 function loadQuestions() {
 	//Pull questions from the latest version hc_questions; metadata from the latest hc_question_numbers
 
-	readFile("data/hc_questions_v2.0.txt", storeLoadedQuestions);
-	readFile("data/hc_question_numbers_v2.0.csv", storeLoadedQuestionNumbers);
-	readFile("data/hc_topics_v2.0.txt", storeLoadedTopics);
+	readFile("data/hc_questions_v" + myVersion + ".txt", storeLoadedQuestions);
+	readFile("data/hc_question_numbers_v" + myVersion + ".csv", storeLoadedQuestionNumbers);
+	readFile("data/hc_topics_v" + myVersion + ".txt", storeLoadedTopics);
 
 	console.log(myReadyState + " is the current ready state");
 	waitUntilReady(3, 100, function() {
@@ -487,10 +614,6 @@ function loadQuestions() {
 	});
 
 	//note: should have error trapping, to be implemented
-}
-
-function createReport() {
-
 }
 
 window.addEventListener("load", loadQuestions);
