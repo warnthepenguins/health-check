@@ -1,17 +1,16 @@
-require('./smoothscroll.js');
-require('./papaparse.min.js');
+var papa = require('./papaparse.min.js');
 
 var myVersion = "2.0";
 
 var myQuestions = [],
-	myTopics = [],
-	myUser;
+	myTopics = [];
+
 var myCurrentScreen = 0,
 	myCurrentTopQuestion = 0,
 	myReadyState = 0;
 
 
-function Meta(uuid, version) {
+function Session(uuid, version) {
 	this.uuid = uuid;
 	this.version = version;
 }
@@ -22,13 +21,22 @@ function Topic(index, name, score) {
 	this.score = score;
 }
 
-function UserInfo(email, name, title, company, phone, contact_preference) {
+function User(email, name, title, company, phone, contact_preference) {
 	this.email = email;
 	this.name = name;
 	this.title = title;
 	this.company = company;
 	this.phone = phone;
 	this.contact_preference = contact_preference || "phone";
+
+	return {
+		email,
+		name,
+		title,
+		company,
+		phone,
+		contact_preference
+	}
 }
 
 function Question(number, text, topic, screen, answer) {
@@ -168,7 +176,6 @@ function showScores() {
 function postQuizAndScores(postToUrl) {
 	var postRequest = new XMLHttpRequest();
 
-
 	var params =
 		"uuid=" + encodeURIComponent(document.getElementById('hc-session-id').innerHTML) + "&" +
 		"email=" + encodeURIComponent(document.getElementById('hc-user-email').innerHTML) + "&" +
@@ -177,6 +184,7 @@ function postQuizAndScores(postToUrl) {
 		"company=" + encodeURIComponent(document.getElementsByName('hc-user-company')[0].value) + "&" +
 		"phone=" + encodeURIComponent(document.getElementsByName('hc-user-phone')[0].value) + "&" +
 		"contact_preference=" + encodeURIComponent(document.getElementsByName('hc-user-contact-preference')[0].value === 'checked' ? "email" : "phone");
+
 
 	postRequest.open("POST", postToUrl, true);
 	postRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -223,12 +231,44 @@ function postUserInfo(postToUrl, callback) {
 	console.log(params);
 }
 
+function writeUserToCSV (user, session, callback) {
+	csv = papa.parse ([session, user]);
+	console.log csv;
+}
+
+function createSessionObj () {
+	return Session (document.getElementById('hc-session-id').innerHTML, myVersion);
+}
+
+function createUserObjFromForm () {
+	return User (
+		document.getElementById('hc-user-email').innerHTML,
+		document.getElementsByName('hc-user-name')[0].value,
+		document.getElementsByName('hc-user-title')[0].value,
+		document.getElementsByName('hc-user-company')[0].value,
+		document.getElementsByName('hc-user-phone')[0].value,
+		document.getElementsByName('hc-user-contact-preference')[0].value === 'checked' ? "email" : "phone"
+	);
+}
+
 function replaceFormSubmit(ev) {
+	var userInfo, sessionInfo;
+
 		ev.preventDefault();
-		postUserInfo("report", function() {
-			window.location = "results";
+
+		userInfo = createUserObjFromForm(),
+		sessionInfo = createSessionObj();
+
+		// write user data to csv at the uuid's row
+		writeUserToCSV(userInfo, sessionInfo, function() {
+			// Show PDF-able results page here -- lazy load it earlier?
 		});
-		// window.localStorage.clear();
+
+		window.localStorage.clear();
+}
+
+function writeScoresToCSV() {
+
 }
 
 function displayResults() {
@@ -242,7 +282,10 @@ function displayResults() {
 	//calculate!
 	console.log("Calculating...");
 	calculateScores(showScores);
-	postQuizAndScores("/results");
+	// postQuizAndScores("/results");
+
+	// Write scores to csv, at uuid loc row
+	writeScoresToCSV();
 
 	var reportButton = document.getElementById("hc-results-request");
 	reportButton.addEventListener('click', replaceFormSubmit);

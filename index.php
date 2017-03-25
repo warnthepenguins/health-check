@@ -12,12 +12,14 @@
            <title>Sophity Health Check</title>
            <link rel='shortcut icon' type='image/x-icon' href='img/Sophity.png'>
 
-           <script src='bundle.js' type='text/javascript'></script>
-
            <link href='css/normalize.css' rel='stylesheet'>
            <link href='css/style.css' rel='stylesheet'>
            <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>
            <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+
+           <script src='./js/smoothscroll.js' type='text/javascript'></script>
+           <script src='bundle.js' type='text/javascript'></script>
+
        </head>
      ";
      echo "<body>";
