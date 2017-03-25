@@ -13,6 +13,11 @@ var myCurrentScreen = 0,
 function Session(uuid, version) {
 	this.uuid = uuid;
 	this.version = version;
+
+	return {
+		uuid,
+		version
+	};
 }
 
 function Topic(index, name, score) {
@@ -36,7 +41,7 @@ function User(email, name, title, company, phone, contact_preference) {
 		company,
 		phone,
 		contact_preference
-	}
+	};
 }
 
 function Question(number, text, topic, screen, answer) {
@@ -232,8 +237,8 @@ function postUserInfo(postToUrl, callback) {
 }
 
 function writeUserToCSV (user, session, callback) {
-	csv = papa.parse ([session, user]);
-	console.log csv;
+	csv = papa.unparse ([session, user]);
+	console.log (csv);
 }
 
 function createSessionObj () {
