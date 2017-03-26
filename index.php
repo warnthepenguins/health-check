@@ -22,6 +22,7 @@
 
        </head>
      ";
+
      echo "<body>";
        require "html/sophity-top-bar.php";
        $uuid = uniqid('session.', true);
