@@ -310,7 +310,9 @@ function postUserInfo(postToUrl, callback) {
 
 function writeUserToCSV (user, session, callback) {
 	csv = papa.unparse ([session, user]);
+	// This does not yet work as it should.
 	console.log (csv);
+	callback ();
 }
 
 function createSessionObj () {
@@ -331,17 +333,21 @@ function createUserObjFromForm () {
 function replaceFormSubmit(ev) {
 	var userInfo, sessionInfo;
 
-		ev.preventDefault();
+	ev.preventDefault();
 
-		userInfo = createUserObjFromForm(),
-		sessionInfo = createSessionObj();
+	userInfo = createUserObjFromForm(),
+	sessionInfo = createSessionObj();
 
-		// write user data to csv at the uuid's row
-		writeUserToCSV(userInfo, sessionInfo, function() {
-			// Show PDF-able results page here -- lazy load it earlier?
-		});
+	// write user data to csv at the uuid's row
+	writeUserToCSV(userInfo, sessionInfo, function() {
+		// Show PDF-able results page here -- lazy load it earlier?
+		// window.localStorage.clear();
+		window.location.assign ('report');
+		console.log("asdfasdfsadf");
+		var txt = document.getElementsByTagName("body")[0].appendChild(document.createTextNode("La la la la laaa!"));
+		alert(txt);
+	});
 
-		window.localStorage.clear();
 }
 
 function writeScoresToCSV() {
