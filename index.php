@@ -25,7 +25,7 @@
 
      echo "<body>";
        require "html/sophity-top-bar.php";
-       $uuid = uniqid('session.', true);
+       $uuid = uniqid('#', true);
        echo "<section class='uinfo'><div class='gone hidden' id='hc-user-email'>{$_POST['email']}</div>";
        echo "<div class='gone hidden' id='hc-session-id'>" . $uuid . "</div></section>";
        require "html/survey-results.php";

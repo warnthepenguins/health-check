@@ -200,17 +200,30 @@ function writeSessionToForm () {
   for (let key in sessionInfo) {
     addHiddenToForm(theForm, key, sessionInfo[key]);
   }
+  // myQuestions.forEach(element, index) {
+  //   addHiddenToForm(theForm, 'questions[' + index + ']', JSON.stringify(element));
+  // }
 }
 
 function postSurveyData(url, callback) {
-  let topics = myTopics,
-    questions = myQuestions,
+  let topics = [],
+    questions = [],
     session = createSessionObj(),
-    json = JSON.stringify({session, topics, questions});
+    json = "";//JSON.stringify({session, topics, questions});
     postRequest = new XMLHttpRequest();
 
-	postRequest.open("POST", url, true);
-	postRequest.setRequestHeader("Content-type", 'application/json; charset=UTF-8');//"application/x-www-form-urlencoded");
+  json = "session[uuid]=" + encodeURIComponent(session.uuid) + "&" +
+    "session[version]=" + encodeURIComponent(session.version) + "&";
+
+  var myAjax = new Ajax.Request('report/index.php?lorem=ipsum&name=binny', {
+  	method: 'post',
+  	onComplete:callback
+  });
+
+/*	postRequest.open("POST", url, true);
+	postRequest.setRequestHeader("Content-type", 'application/x-www-form-urlencoded');
+  postRequest.setRequestHeader("Content-length", json.length);
+  postRequest.setRequestHeader("Connection", "close");
 
 	postRequest.onreadystatechange = function() {
 		if (postRequest.readyState === XMLHttpRequest.DONE && postRequest.status === 200) {
@@ -221,6 +234,7 @@ function postSurveyData(url, callback) {
   };
 	postRequest.send(json);
   console.log(json);
+  */
 }
 
 function displayResults() {
@@ -234,7 +248,9 @@ function displayResults() {
   console.log(myVersion);
 
 	writeSessionToForm();
-  postSurveyData('./report/index.php');
+  postSurveyData('report');
+
+  //postSurveyData('./report/index.php'); // doesn't work yet
 	document.getElementById("hc-results-request").addEventListener(
     "click", function() {
 		  // window.localStorage.clear();
