@@ -301,10 +301,10 @@ function postSurveyData(url, callback) {
 
   var myAjax = new Ajax.Request('report/index.php?lorem=ipsum&name=binny', {
   	method: 'post',
-  	onComplete:handlerFunction
+  	onComplete:callback
   });
 
-	postRequest.open("POST", url, true);
+/*	postRequest.open("POST", url, true);
 	postRequest.setRequestHeader("Content-type", 'application/x-www-form-urlencoded');
   postRequest.setRequestHeader("Content-length", json.length);
   postRequest.setRequestHeader("Connection", "close");
@@ -318,6 +318,7 @@ function postSurveyData(url, callback) {
   };
 	postRequest.send(json);
   console.log(json);
+  */
 }
 
 function displayResults() {
