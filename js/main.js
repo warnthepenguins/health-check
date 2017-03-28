@@ -1,5 +1,3 @@
-var papa = require('./papaparse.min.js');
-
 var myVersion = "2.0";
 
 var myQuestions = [],
