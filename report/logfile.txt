@@ -1,0 +1,8 @@
+03.28 22:07.17
+...php session started
+...1 new line written from php://input at #58dade7cd67b52.36485349
+
+03.28 22:09.28
+...php session started
+...1 new line written from POST at #58dade7cd67b52.36485349
+

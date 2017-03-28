@@ -94,23 +94,25 @@ var myCurrentScreen = 0,
 	myReadyState = 0;
 
 
-let Session = function (uuid, version) {
+let Session = function (uuid, version, email) {
 //	this.uuid = uuid;
 //	this.version = version;
 	return {
 		uuid: uuid || "session1",
 		version: version || "0.0",
+    email: email || ""
 	};
 }
 
-function Topic(index, name, score) {
-	this.index = index;
-	this.name = name;
-	this.score = score;
+let Topic = function (index, name, score) {
+  return {
+		index: index || 0,
+		name: name || "Topic",
+    score: score || 0
+	};
 }
 
-function User(email, name, title, company, phone, contactPreference) {
-	this.email = email;
+function User(name, title, company, phone, contactPreference) {
 	this.name = name;
 	this.title = title;
 	this.company = company;
@@ -118,7 +120,6 @@ function User(email, name, title, company, phone, contactPreference) {
 	this.contactPreference = contactPreference || "phone";
 
 	return {
-		email: email,
 		name: name,
 		title: title,
 		company: company,
@@ -136,7 +137,7 @@ function Question(number, text, topic, screen, answer) {
 }
 
 // The POST will include these JSON objects:
-// User { email, name, title, company, phone, contact_preference }
+// User { name, title, company, phone, contact_preference }
 // Scores { all_topic_scores, how_many_scores, total_score, version, how_many_questions }
 // A serialized string of Questions --- "number\ttext\ttopic\tanswer\nnumber\ttext\ttopic\tanswer..."
 
@@ -265,7 +266,11 @@ function showScores() {
 }
 
 function createSessionObj () {
-	return Session (document.getElementById('hc-session-id').innerHTML, myVersion);
+	return Session (
+    document.getElementById('hc-session-id').innerHTML,
+    myVersion,
+    document.getElementById('hc-user-email').innerHTML
+  );
 }
 
 function addHiddenToForm (theForm, key, value) {
@@ -282,43 +287,50 @@ function writeSessionToForm () {
   let theForm = document.forms['hc-user-info'];
 
   for (let key in sessionInfo) {
-    addHiddenToForm(theForm, key, sessionInfo[key]);
+    addHiddenToForm(theForm, 'hc-session-' + key, sessionInfo[key]);
   }
-  // myQuestions.forEach(element, index) {
-  //   addHiddenToForm(theForm, 'questions[' + index + ']', JSON.stringify(element));
-  // }
+
+  myTopics.forEach(function (element, index) {
+    for (let key in element) {
+      addHiddenToForm(theForm, 'hc-topics[' + index + '][' + key + ']', element[key]);
+    }
+  });
+
+  myQuestions.forEach(function (element, index) {
+    for (let key in element) {
+      addHiddenToForm(theForm, 'hc-questions[' + index + '][' + key + ']', element[key]);
+    }
+  });
+}
+
+function printResponse(response) {
+  console.log(response);
 }
 
 function postSurveyData(url, callback) {
-  let topics = [],
-    questions = [],
+  let topics = myTopics,
+    questions = myQuestions,
     session = createSessionObj(),
-    json = "";//JSON.stringify({session, topics, questions});
+    json = encodeURIComponent(JSON.stringify([session, topics, questions]));
     postRequest = new XMLHttpRequest();
+    console.log("STARTING POST");
 
-  json = "session[uuid]=" + encodeURIComponent(session.uuid) + "&" +
-    "session[version]=" + encodeURIComponent(session.version) + "&";
+  // json = "session[uuid]=" + encodeURIComponent(session.uuid) + "&" +
+  //   "session[version]=" + encodeURIComponent(session.version);
 
-  var myAjax = new Ajax.Request('report/index.php?lorem=ipsum&name=binny', {
-  	method: 'post',
-  	onComplete:callback
-  });
+  //json = 'json={"a":1,"b":2,"c":3,"d":4,"e":5}';
 
-/*	postRequest.open("POST", url, true);
-	postRequest.setRequestHeader("Content-type", 'application/x-www-form-urlencoded');
-  postRequest.setRequestHeader("Content-length", json.length);
-  postRequest.setRequestHeader("Connection", "close");
+	postRequest.open("POST", url, true);
+	postRequest.setRequestHeader("Content-type", 'application/json');//'application/json');
+  // postRequest.setRequestHeader("Content-length", json.length);
+  // postRequest.setRequestHeader("Connection", "close");
 
 	postRequest.onreadystatechange = function() {
-		if (postRequest.readyState === XMLHttpRequest.DONE && postRequest.status === 200) {
-			if (typeof callback !== "undefined") {
-        callback();
-      }
+		if (postRequest.readyState === XMLHttpRequest.DONE && (postRequest.status === 200 || postRequest.status === 201)) {
+      console.log(postRequest);
 		}
   };
 	postRequest.send(json);
-  console.log(json);
-  */
 }
 
 function displayResults() {
@@ -332,12 +344,12 @@ function displayResults() {
   console.log(myVersion);
 
 	writeSessionToForm();
-  postSurveyData('report');
+  postSurveyData('report/index.php', printResponse);
 
   //postSurveyData('./report/index.php'); // doesn't work yet
 	document.getElementById("hc-results-request").addEventListener(
     "click", function() {
-		  // window.localStorage.clear();
+		  window.localStorage.clear();
 	  }
   );
 }
