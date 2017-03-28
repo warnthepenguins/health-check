@@ -64,9 +64,6 @@
 
   if (array_key_exists('check_submit', $_POST)) {
     //Form submitted - write user data + scores
-    echo json_encode($_POST);
-    http_response_code(200);
-
     $dir = "hc-database-v" . $_POST['hc-session-version'] . ".csv";
     create_file_if_none($dir);
 
