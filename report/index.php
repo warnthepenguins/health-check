@@ -99,6 +99,6 @@
   fwrite($log, date("m.d H:i.s") . $result . "\r\n\r\n");
   fclose($log);
 
-  header("Location: ./index-full-report.html");
+  header("Location: ./report.html");
 
 ?>
