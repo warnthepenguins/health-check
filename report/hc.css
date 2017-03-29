@@ -1,0 +1,132 @@
+body {
+	background-color: Lightgrey;
+}
+.container {
+	margin-left: 10%;
+	margin-right: 10%;
+	background-color: white;
+	padding: 10%;
+}
+h2 {
+	font-family: avenir;
+	color: rgb(54, 91, 136)
+}
+h4 {
+	font-family: cambria;
+	font-weight: normal;
+}
+p {
+	font-family: cambria;
+	color: rgb(0,0,0);
+}
+.image {
+	text-align: center;
+}
+
+
+
+
+
+.title-page {
+	height: 100%;
+	width: 100%
+}
+.sophity-logo {
+	width: 100%;
+	height: 25%;
+	background-color: Lightgrey;
+	float: left;
+}
+.sophity-logo img {
+	
+
+
+
+
+	
+}
+.puzzle-image {
+	height: 100%
+	float: left;
+		
+}
+.puzzle-image img {
+	max-height: 25%;
+	
+}
+.section-three h2 {
+
+}
+
+
+
+
+.table-of-contents {
+	height: 100%;
+	width: 100%;
+}
+
+
+
+
+
+
+.sophity-services-success-model {	
+}
+
+
+
+
+
+
+.sophity-services-success-health-check {
+	height: 100%;
+	width: 100%;
+}
+
+
+
+
+
+.results table {
+	width: 100%;
+}
+
+.table-header {
+	font-size: 20px;
+}
+.row-label {
+	font-weight: normal;
+	text-align: left;
+	padding-left: 10px;
+}
+
+
+
+
+.about-sophity {
+	height: 100%;
+	width: 100%;
+}
+
+
+
+
+
+
+
+
+
+table {
+	margin: 0 auto;
+	border: 1px solid black;
+}
+
+td, th {
+	border: 1px black solid;
+}
+
+
+
+
+
