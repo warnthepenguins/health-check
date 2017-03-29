@@ -9,8 +9,6 @@ var myCurrentScreen = 0,
 
 
 let Session = function (uuid, version, email) {
-//	this.uuid = uuid;
-//	this.version = version;
 	return {
 		uuid: uuid || "session1",
 		version: version || "0.0",
@@ -26,7 +24,7 @@ let Topic = function (index, name, score) {
 	};
 }
 
-function User(name, title, company, phone, contactPreference) {
+function User (name, title, company, phone, contactPreference) {
 	this.name = name;
 	this.title = title;
 	this.company = company;
@@ -42,7 +40,7 @@ function User(name, title, company, phone, contactPreference) {
 	};
 }
 
-function Question(number, text, topic, screen, answer) {
+function Question (number, text, topic, screen, answer) {
 	this.number = number;
 	this.text = text;
 	this.topic = topic;
@@ -50,11 +48,26 @@ function Question(number, text, topic, screen, answer) {
 	this.answer = answer;
 }
 
-function log(text) {
+function log (text) {
 //  console.log(text);
 }
 
-function jumpToNextQuestion(myElement) {
+function stripSpecialChars (string) {
+  if (typeof string !== "string") {
+    return "";
+  }
+  return string.replace(/[^\w\s@.-_*#]/gi, '');
+}
+
+function extendFormSubmit(event) {
+  let theForm = document.forms["hc-user-info"];
+  for (let i = 0; i < theForm.elements.length; i += 1) {
+    theForm.elements[i].value = stripSpecialChars(theForm.elements[i].value);
+  }
+  window.localStorage.clear();
+}
+
+function jumpToNextQuestion (myElement) {
 	var myQuestionNumber = 1 + Number(myElement.getAttribute("name").replace(/hc-answers-/,""));
 	var myNextQuestion = document.getElementById("hc-question-" + myQuestionNumber);
 	if (myNextQuestion) {
@@ -64,7 +77,6 @@ function jumpToNextQuestion(myElement) {
 			myNextQuestion.focus();
 			myElement.parentNode.setAttribute("data-scrolled", "true");
 		}
-		// jumpToNextQuestion(myNextQuestion, myNextQuestion.getBoundingClientRect().top - window.screenY);
 	} else {
 		if (myElement.parentNode.getAttribute("data-scrolled") === "false") {
 			myNextQuestion = document.getElementById("hc-button-next");
@@ -75,11 +87,11 @@ function jumpToNextQuestion(myElement) {
 	}
 }
 
-function toggleVisibility(element, waitTime) {
+function toggleVisibility (element, waitTime) {
 	waitTime = waitTime || 500;
 	if (element.classList.contains("gone") || element.classList.contains("hidden")) {
 		element.classList.remove("gone");
-		setTimeout(function() {
+		setTimeout(function () {
       element.classList.remove("hidden");
     }, waitTime);
 	} else {
@@ -88,8 +100,7 @@ function toggleVisibility(element, waitTime) {
 	}
 }
 
-function calculateScores(callback) {
-	//crunch numbers to calc results
+function calculateScores (callback) {
 	var indexTopic = 0,
 		countQuestionsInTopic = 0;
 
@@ -121,11 +132,11 @@ function calculateScores(callback) {
 	callback();
 }
 
-function showScores() {
+function showScores () {
 	var myScoreBox = document.getElementById("hc-results-section").getElementsByClassName("hc-results-score")[0];
 
 	//set topic score bars -- currently invisible
-	[].forEach.call(document.getElementById("hc-results-section").getElementsByClassName("hc-progress"), function(element, index) {
+	[].forEach.call(document.getElementById("hc-results-section").getElementsByClassName("hc-progress"), function (element, index) {
 		element.nextElementSibling.innerHTML = myTopics[index + 1].name;
 		element.style.transform = "scaleX(" + (0.5 * (myTopics[index + 1].score) + 0.02) + ")";
 		element.style.transition = "transform 2s ease-in-out";
@@ -166,17 +177,16 @@ function showScores() {
 
 function createSessionObj () {
 	return Session (
-    document.getElementById('hc-session-id').innerHTML,
+    stripSpecialChars(document.getElementById('hc-session-id').innerHTML),
     myVersion,
-    document.getElementById('hc-user-email').innerHTML
+    stripSpecialChars(document.getElementById('hc-user-email').innerHTML)
   );
 }
 
 function addHiddenToForm (theForm, key, value) {
-    // Create a hidden input element, and append it to the form:
     var input = document.createElement('input');
     input.type = 'hidden';
-    input.name = key; // 'name-as-seen-at-the-server';
+    input.name = key;
     input.value = value;
     theForm.appendChild(input);
 }
@@ -202,7 +212,7 @@ function writeSessionToForm () {
   });
 }
 
-function postSurveyData(url, callback) {
+function postSurveyData (url, callback) {
   let topics = myTopics,
     questions = myQuestions,
     session = createSessionObj(),
@@ -212,7 +222,7 @@ function postSurveyData(url, callback) {
 	postRequest.open("POST", url, true);
 	postRequest.setRequestHeader("Content-type", 'application/json');//'application/json');
 
-	postRequest.onreadystatechange = function() {
+	postRequest.onreadystatechange = function () {
 		if (postRequest.readyState === XMLHttpRequest.DONE && (postRequest.status === 200 || postRequest.status === 201)) {
       callback(postRequest.responseText);
 		}
@@ -220,7 +230,7 @@ function postSurveyData(url, callback) {
 	postRequest.send(json);
 }
 
-function displayResults() {
+function displayResults () {
 	toggleVisibility(document.getElementById("hc-results-section"));
 	toggleVisibility(document.getElementById("hc-question-section"));
 	toggleVisibility(document.getElementsByClassName("hc-results-actions-wrapper")[0],1000);
@@ -232,14 +242,15 @@ function displayResults() {
   postSurveyData('report/index.php', log);
 
   //postSurveyData('./report/index.php'); // doesn't work yet
-	document.getElementById("hc-results-request").addEventListener(
-    "click", function() {
-		  window.localStorage.clear();
-	  }
+  let theForm = document.forms["hc-user-info"];
+
+  document.getElementById("hc-results-request").addEventListener(
+    "click",
+    extendFormSubmit
   );
 }
 
-function displayNextQuestionSet() {
+function displayNextQuestionSet () {
 	//increment the screen counter
 	//for each question with matching screen value in myQuestions
 		//write HTML for the question and answer elements, including unique ids and names
@@ -265,11 +276,6 @@ function displayNextQuestionSet() {
 
 	theQuestionSection = document.getElementById("hc-question-section");
 
-	// if (localStorage.getItem('theQuestionSection')) {
-	// 	alert("Local storage contains " + localStorage.getItem('theQuestionSection'));
-	// 	theQuestionSection.innerHTML = localStorage.getItem('theQuestionSection');
-	// }
-
 	theQuestionTemplate = theQuestionSection.removeChild(document.getElementById("hc-question-1"));
 	theButton = theQuestionSection.removeChild(document.getElementsByClassName("hc-button-wrapper")[0]);
 	theTopicHeader = theQuestionSection.getElementsByClassName("hc-topic-header")[0];
@@ -277,7 +283,7 @@ function displayNextQuestionSet() {
 	theTopicHeader = theQuestionSection.removeChild(theTopicHeader);
 	theQuestionSection.innerHTML = "";
 
-	myQuestions.forEach(function(element) {
+	myQuestions.forEach(function (element) {
 		if (element.screen === myCurrentScreen) {
 			numQuestionsDisplayed++;
 			if (numQuestionsDisplayed === 1) {
@@ -292,19 +298,19 @@ function displayNextQuestionSet() {
 			tempAnswers = tempQuestion.getElementsByClassName("hc-answer-key")[0];
 			tempAnswers.setAttribute("data-scrolled", false);
 			tempNumber = 0;
-			[].forEach.call(tempAnswers.getElementsByTagName("label"), function(element) {
+			[].forEach.call(tempAnswers.getElementsByTagName("label"), function (element) {
 				tempNumber++;
 				element.setAttribute("for", "hc-answers-" + numQuestionsDisplayed + "-" + tempNumber);
 			});
 			tempNumber = 0;
-			[].forEach.call(tempAnswers.getElementsByTagName("input"), function(element) {
+			[].forEach.call(tempAnswers.getElementsByTagName("input"), function (element) {
 				tempNumber++;
 				element.setAttribute("name", "hc-answers-" + numQuestionsDisplayed);
 				element.setAttribute("id", "hc-answers-" + numQuestionsDisplayed + "-" + tempNumber);
 				element.checked = false;
-				element.addEventListener("click", function(e) {if (e.screenX > 0) {jumpToNextQuestion(this);}}, {once: true});
-				element.addEventListener("focusin", function(e) {this.parentNode.classList.add("focused"); this.parentNode.parentNode.parentNode.classList.add("focused");});
-				element.addEventListener("focusout", function(e) {this.parentNode.classList.remove("focused"); this.parentNode.parentNode.parentNode.classList.remove("focused");});
+				element.addEventListener("click", function (e) {if (e.screenX > 0) {jumpToNextQuestion(this);}}, {once: true});
+				element.addEventListener("focusin", function (e) {this.parentNode.classList.add("focused"); this.parentNode.parentNode.parentNode.classList.add("focused");});
+				element.addEventListener("focusout", function (e) {this.parentNode.classList.remove("focused"); this.parentNode.parentNode.parentNode.classList.remove("focused");});
 			});
 		}
 	});
@@ -354,10 +360,10 @@ function displayNextQuestionSet() {
 
 }
 
-function storeLoadedTopics(rawText, callback) {
+function storeLoadedTopics (rawText, callback) {
 	var myArray = rawText.split('\n');
 
-	myArray = myArray.map(function(element, index, array) {
+	myArray = myArray.map(function (element, index, array) {
 		var tempTopicArray = element.split('\t');
 		tempTopicArray[0] = Number(tempTopicArray[0]);
 		return tempTopicArray;
@@ -378,9 +384,9 @@ function storeLoadedTopics(rawText, callback) {
   callback();
 }
 
-function storeLoadedQuestions(rawText, callback) {
+function storeLoadedQuestions (rawText, callback) {
 	var myQuestionArray = rawText.split('\n');
-	myQuestionArray = myQuestionArray.map(function(element) {
+	myQuestionArray = myQuestionArray.map(function (element) {
 		return element.trim();
 	});
 	for (var i = 0; i < myQuestionArray.length; i++) {
@@ -389,7 +395,7 @@ function storeLoadedQuestions(rawText, callback) {
 			i--;
 		}
 	}
-	myQuestionArray.forEach(function(element, index, array) {
+	myQuestionArray.forEach(function (element, index, array) {
 		if (myQuestions.length > index) {
 			myQuestions[index].text = element;
 		} else {
@@ -400,21 +406,21 @@ function storeLoadedQuestions(rawText, callback) {
   callback();
 }
 
-function storeLoadedQuestionNumbers(rawText, callback) {
+function storeLoadedQuestionNumbers (rawText, callback) {
 	var myNumberArray = rawText.split('\n');
 	var tempNumberArray = [];
 	var tempSubArray = [];
 	var temp = [0];
-	myNumberArray = myNumberArray.map(function(element, index, array) {
+	myNumberArray = myNumberArray.map(function (element, index, array) {
 		var tempSubArray = element.split('\t');
-		return tempSubArray.map(function(elt) {
+		return tempSubArray.map(function (elt) {
 			return Number(elt);
 		});
 	});
 	while (myNumberArray[myNumberArray.length - 1][0] === 0 || isNaN(myNumberArray[myNumberArray.length - 1][0])) {
 		myNumberArray.pop();
 	}
-	myNumberArray.forEach(function(element, index, array) {
+	myNumberArray.forEach(function (element, index, array) {
 		if (myQuestions.length > index) {
 			myQuestions[index].number = element[0];
 			myQuestions[index].topic = element[1];
@@ -427,13 +433,13 @@ function storeLoadedQuestionNumbers(rawText, callback) {
   callback();
 }
 
-function readFile(url, callback) {
+function readFile (url, callback) {
 	var myFile = new XMLHttpRequest(),
 		myFullText = "";
 	myFile.open("GET", url, true);
-	myFile.onreadystatechange = function() {
+	myFile.onreadystatechange = function () {
 		if (myFile.readyState === XMLHttpRequest.DONE && myFile.status === 200) {
-			callback(myFile.response, function() {
+			callback(myFile.response, function () {
         checkFilesLoaded(3);
       });
 		}
@@ -441,14 +447,14 @@ function readFile(url, callback) {
 	myFile.send();
 }
 
-function checkAnswers() {
+function checkAnswers () {
 	//Validate current set of responses; flag unanswered questions; returns 0 (error) or 1 (okay)
 	var myAnswerSet = document.getElementsByClassName("hc-answer-key"),
 		myTopUncheckedAnswer = null;
 
-	[].forEach.call(myAnswerSet, function(element, index) {
+	[].forEach.call(myAnswerSet, function (element, index) {
 		var isChecked = 0;
-		[].forEach.call(element.getElementsByTagName("input"), function(innerElement) {
+		[].forEach.call(element.getElementsByTagName("input"), function (innerElement) {
 			isChecked += innerElement.checked;
 		});
 		if (isChecked === 0) {
@@ -468,14 +474,14 @@ function checkAnswers() {
 	return false;
 }
 
-function scrapeAnswers() {
+function scrapeAnswers () {
 	//get current set of answers, check for completion, save answers in myQuestions, update local storage of myQuestions
 	var myAnswerSet = document.getElementsByClassName("hc-answer-key"),
 		flagDone = false;
 
-	[].forEach.call(myAnswerSet, function(element, index) {
+	[].forEach.call(myAnswerSet, function (element, index) {
 		var myTotal = 0;
-		[].forEach.call(element.getElementsByTagName("input"), function(innerElement) {
+		[].forEach.call(element.getElementsByTagName("input"), function (innerElement) {
 			myTotal += innerElement.checked * innerElement.value;
 		});
 		myQuestions[myCurrentTopQuestion + index - 1].answer = myTotal;
@@ -490,7 +496,7 @@ function scrapeAnswers() {
 	}
 }
 
-function recoverLocalData(callback) {
+function recoverLocalData (callback) {
 	if (localStorage.getItem('myCurrentScreen') > 0) {
 		myCurrentScreen = Number(localStorage.getItem('myCurrentScreen'));
 
@@ -509,11 +515,9 @@ function recoverLocalData(callback) {
 	callback();
 }
 
-function beginSurvey() {
-	document.getElementById("hc-button-next").addEventListener("click", function() {
-		if (myCurrentTopQuestion === myQuestions.length) {
-//			displayResults();
-		} else if (checkAnswers()) {
+function beginSurvey () {
+	document.getElementById("hc-button-next").addEventListener("click", function () {
+    if (checkAnswers()) {
 			scrapeAnswers();
 			displayNextQuestionSet();
 		}
@@ -528,7 +532,7 @@ function checkFilesLoaded () {
 	}
 }
 
-function loadQuestions() {
+function loadQuestions () {
 
 	readFile("data/hc_questions_v" + myVersion + ".txt", storeLoadedQuestions);
 	readFile("data/hc_question_numbers_v" + myVersion + ".csv", storeLoadedQuestionNumbers);
