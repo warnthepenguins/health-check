@@ -6,6 +6,8 @@ The Health Check is an online survey designed as a tool for leaders of professio
 
 The Javascript reads questions and metadata from files stored in /data, then writes questions to the screen using the existing HTML structure as a template.
 
+Check it out at (http://samnolting.com/healthcheck/enter_email.html).
+
 ## Motivation
 
 The Health Check is a project for Sophity (http://sophity.com), a PSO consultancy specializing in improving time tracking and project management for SaaS PSOs.
