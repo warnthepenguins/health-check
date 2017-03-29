@@ -50,11 +50,9 @@ function Question(number, text, topic, screen, answer) {
 	this.answer = answer;
 }
 
-// The POST will include these JSON objects:
-// User { name, title, company, phone, contact_preference }
-// Scores { all_topic_scores, how_many_scores, total_score, version, how_many_questions }
-// A serialized string of Questions --- "number\ttext\ttopic\tanswer\nnumber\ttext\ttopic\tanswer..."
-
+function log(text) {
+//  console.log(text);
+}
 
 function jumpToNextQuestion(myElement) {
 	var myQuestionNumber = 1 + Number(myElement.getAttribute("name").replace(/hc-answers-/,""));
@@ -75,12 +73,6 @@ function jumpToNextQuestion(myElement) {
 			myElement.parentNode.setAttribute("data-scrolled", "true");
 		}
 	}
-// } else if (myStep > 0 && window.innerHeight + window.scrollY < document.body.offsetHeight - 10) {
-// 	console.log(window.screenY + " out of " + myStep);
-// 	window.scrollBy(0, 10);
-// 	setTimeout(jumpToNextQuestion(myElement, myStep - 10), 100);
-// } else {
-// 	//
 }
 
 function toggleVisibility(element, waitTime) {
@@ -89,7 +81,6 @@ function toggleVisibility(element, waitTime) {
 		element.classList.remove("gone");
 		setTimeout(function() {
       element.classList.remove("hidden");
-      // console.log(element.classList + " becomes visible");
     }, waitTime);
 	} else {
 		element.classList.add("hidden");
@@ -102,7 +93,6 @@ function calculateScores(callback) {
 	var indexTopic = 0,
 		countQuestionsInTopic = 0;
 
-	// console.log("calculateScores");
 	if (!(myTopics.length > 0)) {
 		myTopics.push(new Topic(0, "Total Score", 0));
 		console.log("WARNING: myTopics is empty!");
@@ -128,8 +118,6 @@ function calculateScores(callback) {
 	myTopics[indexTopic].score = myTopics[indexTopic].score / countQuestionsInTopic;
 	myTopics[0].score += myTopics[indexTopic].score;
 	myTopics[0].score = myTopics[0].score / (myTopics.length - 1);
-	// console.log("Scores by topic (index 0 is totals):")
-  // console.log(myTopics);
 	callback();
 }
 
@@ -138,13 +126,10 @@ function showScores() {
 
 	//set topic score bars -- currently invisible
 	[].forEach.call(document.getElementById("hc-results-section").getElementsByClassName("hc-progress"), function(element, index) {
-		// toggleVisibility(element);
-		// console.log("Showing bar for topic #" + index + "...");
 		element.nextElementSibling.innerHTML = myTopics[index + 1].name;
 		element.style.transform = "scaleX(" + (0.5 * (myTopics[index + 1].score) + 0.02) + ")";
 		element.style.transition = "transform 2s ease-in-out";
 		if (myTopics[index + 1].score < 3 && myTopics[index + 1].score >= 2) {
-//			console.log(element);
 			element.classList.add("warning");
 		} else if (myTopics[index + 1].score < 2) {
 			element.classList.add("warning-strong");
@@ -217,31 +202,19 @@ function writeSessionToForm () {
   });
 }
 
-function printResponse(response) {
-  console.log(response);
-}
-
 function postSurveyData(url, callback) {
   let topics = myTopics,
     questions = myQuestions,
     session = createSessionObj(),
     json = encodeURIComponent(JSON.stringify([session, topics, questions]));
     postRequest = new XMLHttpRequest();
-    console.log("STARTING POST");
-
-  // json = "session[uuid]=" + encodeURIComponent(session.uuid) + "&" +
-  //   "session[version]=" + encodeURIComponent(session.version);
-
-  //json = 'json={"a":1,"b":2,"c":3,"d":4,"e":5}';
 
 	postRequest.open("POST", url, true);
 	postRequest.setRequestHeader("Content-type", 'application/json');//'application/json');
-  // postRequest.setRequestHeader("Content-length", json.length);
-  // postRequest.setRequestHeader("Connection", "close");
 
 	postRequest.onreadystatechange = function() {
 		if (postRequest.readyState === XMLHttpRequest.DONE && (postRequest.status === 200 || postRequest.status === 201)) {
-      console.log(postRequest);
+      callback(postRequest.responseText);
 		}
   };
 	postRequest.send(json);
@@ -255,10 +228,8 @@ function displayResults() {
 
 	calculateScores(showScores);
 
-  console.log(myVersion);
-
 	writeSessionToForm();
-  postSurveyData('report/index.php', printResponse);
+  postSurveyData('report/index.php', log);
 
   //postSurveyData('./report/index.php'); // doesn't work yet
 	document.getElementById("hc-results-request").addEventListener(
@@ -285,7 +256,6 @@ function displayNextQuestionSet() {
 
 	window.scroll({ top: 0, left: 0, behavior: 'smooth' });
 
-	// console.log("displayNextQuestionSet: Screen #" + myCurrentScreen + " out of " + myQuestions[myQuestions.length - 1].screen);
 	if (myCurrentScreen === myQuestions[myQuestions.length - 1].screen) {
 		displayResults();
 		return;
@@ -375,8 +345,6 @@ function displayNextQuestionSet() {
 
 	tempNumber = (myCurrentTopQuestion / myQuestions.length) * 2;
 	theProgressBar = theTopicHeader.appendChild(theProgressBar);
-	// console.log(theProgressBar);
-	// theProgressBar.getElementsByClassName("hc-progress")[0].style.marginLeft = ((Number(theProgressBar.getElementsByClassName("hc-progress")[0].offsetWidth) * -(1 - tempNumber) + 1)) + "px";
 	theProgressBar.getElementsByClassName("hc-progress")[0].style.transform = "scaleX(" + tempNumber + ")";
 	theProgressBar.getElementsByTagName("p")[0].innerHTML = "";
 	theProgressBar.getElementsByTagName("p")[0].appendChild(document.createTextNode(myCurrentTopQuestion + " of " + myQuestions.length + " completed (" + Math.trunc(1 + (99 * myCurrentTopQuestion / myQuestions.length)) + "%)"));
@@ -386,7 +354,7 @@ function displayNextQuestionSet() {
 
 }
 
-function storeLoadedTopics(rawText) {
+function storeLoadedTopics(rawText, callback) {
 	var myArray = rawText.split('\n');
 
 	myArray = myArray.map(function(element, index, array) {
@@ -400,7 +368,6 @@ function storeLoadedTopics(rawText) {
 	}
 
 	if (!(myTopics.length < 0)) {
-		// console.log("Topics list empty, creating list");
 		myTopics.push(new Topic(0, "Total Score", 0));
 		for (var i = 1; i <= myArray.length; i++) {
 			myTopics.push(new Topic(myArray[i - 1][0], myArray[i - 1][1], 0));
@@ -408,10 +375,10 @@ function storeLoadedTopics(rawText) {
 	}
 
 	myReadyState++;
-	// console.log(myReadyState);
+  callback();
 }
 
-function storeLoadedQuestions(rawText) {
+function storeLoadedQuestions(rawText, callback) {
 	var myQuestionArray = rawText.split('\n');
 	myQuestionArray = myQuestionArray.map(function(element) {
 		return element.trim();
@@ -430,10 +397,10 @@ function storeLoadedQuestions(rawText) {
 		}
 	});
 	myReadyState++;
-	// console.log(myReadyState);
+  callback();
 }
 
-function storeLoadedQuestionNumbers(rawText) {
+function storeLoadedQuestionNumbers(rawText, callback) {
 	var myNumberArray = rawText.split('\n');
 	var tempNumberArray = [];
 	var tempSubArray = [];
@@ -456,9 +423,8 @@ function storeLoadedQuestionNumbers(rawText) {
 			myQuestions.push(new Question(element[0], "", element[1], element[2], 0));
 		}
 	});
-	//checkReadyState
 	myReadyState++;
-	// console.log(myReadyState);
+  callback();
 }
 
 function readFile(url, callback) {
@@ -467,7 +433,9 @@ function readFile(url, callback) {
 	myFile.open("GET", url, true);
 	myFile.onreadystatechange = function() {
 		if (myFile.readyState === XMLHttpRequest.DONE && myFile.status === 200) {
-			callback(myFile.response);
+			callback(myFile.response, function() {
+        checkFilesLoaded(3);
+      });
 		}
 	}
 	myFile.send();
@@ -512,10 +480,8 @@ function scrapeAnswers() {
 		});
 		myQuestions[myCurrentTopQuestion + index - 1].answer = myTotal;
 		localStorage.setItem('answer' + (myCurrentTopQuestion + index - 1), myTotal);
-		// console.log("Answer to #" + (myCurrentTopQuestion + index - 1) + " stored: " + myTotal);
 		if (myCurrentTopQuestion + index === myQuestions.length) {
 			flagDone = true; //end of survey!
-			// console.log((myCurrentTopQuestion + index) + " questions answered; complete!");
 		}
 	});
 	localStorage.setItem('myCurrentScreen', myCurrentScreen);
@@ -527,18 +493,14 @@ function scrapeAnswers() {
 function recoverLocalData(callback) {
 	if (localStorage.getItem('myCurrentScreen') > 0) {
 		myCurrentScreen = Number(localStorage.getItem('myCurrentScreen'));
-		// console.log("Recovering " + myCurrentScreen + " screens...");
 
 		if (localStorage.getItem('theQuestionSection')) {
-			// alert("Local storage contains " + localStorage.getItem('theQuestionSection'));
 			document.getElementById("hc-question-section").innerHTML = localStorage.getItem('theQuestionSection');
 		}
 
 		for (var i = 0; i < myQuestions.length; i++) {
-			// console.log("Looking for answers to question " + i);
 			if (localStorage.getItem('answer' + i) ) {
 				myQuestions[i].answer = Number(localStorage.getItem('answer' + i));
-				// console.log(i + ": " + myQuestions[i].answer);
 			} else {
 				i = myQuestions.length;
 			}
@@ -560,54 +522,18 @@ function beginSurvey() {
 	displayNextQuestionSet();
 }
 
-function waitUntilReady(howMany, ticks, callback) {
-	setTimeout(function() {
-		if (myReadyState >= howMany || ticks <= 0) {
-			callback();
-		} else {
-			waitUntilReady(3, ticks - 1, callback);
-		}
-	}, 100);
+function checkFilesLoaded () {
+  if (myReadyState >= 3) {
+		recoverLocalData(beginSurvey);
+	}
 }
 
 function loadQuestions() {
-	//Pull questions from the latest version hc_questions; metadata from the latest hc_question_numbers
 
 	readFile("data/hc_questions_v" + myVersion + ".txt", storeLoadedQuestions);
 	readFile("data/hc_question_numbers_v" + myVersion + ".csv", storeLoadedQuestionNumbers);
 	readFile("data/hc_topics_v" + myVersion + ".txt", storeLoadedTopics);
 
-	// console.log(myReadyState + " is the current ready state");
-	waitUntilReady(3, 100, function() {
-		// console.log(myReadyState + " is the current ready state");
-		// console.log("Data loaded, getting started.");
-		recoverLocalData(beginSurvey);
-	});
-
-	//note: should have error trapping, to be implemented
 }
 
 window.addEventListener("load", loadQuestions);
-
-/*function <<document load>> () {
-	run loadQuestions;
-	map showNextScreen function to NEXT button
-	somehow create myAnswers[] as an accessible global, or set up infrastructure to store it in db
-}*/
-
-
-
-
-//puzzle: 	how to preserve myAnswers[] as a global variable?
-//			Should answer data be written directly to database as it's scraped?
-//				^probably, for saveability
-
-//puzz2 	how to pull data from file?
-
-//puzz3		how to get children of named element by class?
-
-//puzz4		how to rewrite onClick?
-
-//puzz5		how to toggle display attribute?
-
-//puzz6
