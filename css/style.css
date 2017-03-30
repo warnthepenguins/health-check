@@ -135,22 +135,12 @@ body {
 h1 {
   font-family: 'Poppins', sans-serif;
   font-size: 1em;
-  background: #eee;
+  color: rgb(54,91,136);
+  /*background: #eee;
   color: rgba(0,0,0,0.85);
   padding: 1.5em;
   margin: 0 auto;
-  text-align: center;
-}
-
-.hc-header {
-  width: 100%;
-  padding-top: 2%;
-}
-
-.hc-header-image {
-  width: 100%;
-  display: inline-block;
-  text-align: center;
+  text-align: center;*/
 }
 
 h2 {
@@ -158,9 +148,9 @@ h2 {
   color: black;
   padding: 0.5em;
   font-size: 1.9em;
+  color: #44813e;
   text-align: center;
-  font-weight: normal;
-  /*font-family: serif;*/
+  font-weight: bold;
   margin: 0;
 }
 
@@ -174,6 +164,10 @@ section {
   /*transition: all 1.5s ease-in-out;*/
 }
 
+section {
+  margin-top: 100px;
+}
+
 .gone {
   display: none;
 }
@@ -183,6 +177,54 @@ section {
   /*height: 0px;*/
   opacity: 0;
   color: rgba(0,0,0,0);
+}
+
+.hc-header {
+  width: 100%;
+  /*height: 30px;*/
+  display: inline-block;
+  position: fixed;
+  top: 0;
+  height: 75px;
+  background: #fff;
+}
+
+.hc-header-image {
+  /*width: 100%;*/
+  float: left;
+  padding: 0;
+  margin: 10px 0px 10px 20px;
+}
+
+.hc-header-image img {
+  height: 30px;
+  margin-top: 12.275px;
+}
+
+.hc-header::after {
+  clear: both;
+  float: none;
+}
+
+.hc-header .hc-header-titles {
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  padding: 10px 5px 10px;
+}
+
+.hc-header-titles h1 {
+  padding: 0;
+  background: none;
+  font-size: 16px;
+  font-style: italic;
+  margin: 0;
+}
+
+.hc-header-titles h2 {
+  font-size: 32px;
+  margin: 0;
+  padding: 0;
 }
 
 .hc-results-wrapper {
@@ -582,9 +624,13 @@ section {
 }
 
 @media screen and (max-width: 900px) {
+  .hc-header {
+    position: absolute;
+  }
+
   section {
     width: 95%;
-    margin: 0 auto;
+    margin: 100px auto 0;
   }
 
   #hc-results-section .hc-progress-bar p {
@@ -593,9 +639,31 @@ section {
 }
 
 @media screen and (max-width: 600px) {
+  .hc-header .hc-header-titles {
+    padding-right: 20px;
+  }
+
+  .hc-header .hc-header-titles > *{
+    text-align: right;
+  }
+
+  .hc-header .hc-header-titles h1 {
+    visibility: hidden;
+  }
+
+  .hc-header .hc-header-titles h2 {
+    font-size: 16px;
+  }
+
   .hc-question-wrapper .hc-question-number {
     font-size: 0.8em;
-    /*padding-top: 3.6em;*/
+    /*transform: rotate(90deg);*/
+    width: 33%;
+    margin: 10px 10px;
+  }
+
+  .hc-question-wrapper .hc-question-text {
+    text-align: center;
   }
 
   #hc-results-section .hc-progress-bar p {
@@ -631,5 +699,11 @@ section {
 
   .hc-answer-key label:last-of-type {
     border-radius: 0% 0% .5vh .5vh;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  .hc-header .hc-header-titles {
+    visibility: hidden;
   }
 }

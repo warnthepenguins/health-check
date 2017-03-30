@@ -126,3 +126,19 @@
 ...php session started
 ...1 new line written from POST at #58dc09864680a0.75627512
 
+03.29 20:07.07
+...php session started
+...1 new line written from php://input at #58dc13d9b77515.32431583
+
+03.29 20:07.16
+...php session started
+...1 new line written from POST at #58dc13d9b77515.32431583
+
+03.29 20:08.41
+...php session started
+...1 new line written from php://input at #58dc1437182da6.44862370
+
+03.29 20:08.49
+...php session started
+...1 new line written from POST at #58dc1437182da6.44862370
+
