@@ -144,7 +144,7 @@ function jumpToNextQuestion (myElement) {
 	var myNextQuestion = document.getElementById("hc-question-" + myQuestionNumber);
 	if (myNextQuestion) {
 		if (myElement.parentNode.getAttribute("data-scrolled") === "false") {
-			window.scroll({ top: myNextQuestion.getBoundingClientRect().top + window.scrollY, left: 0, behavior: 'smooth' });
+			window.scroll({ top: (myNextQuestion.getBoundingClientRect().top + window.scrollY - 100), left: 0, behavior: 'smooth' });
 			myNextQuestion = myNextQuestion.getElementsByClassName("hc-answer-key")[0].getElementsByTagName("input")[0];
 			myNextQuestion.focus();
 			myElement.parentNode.setAttribute("data-scrolled", "true");
@@ -152,7 +152,7 @@ function jumpToNextQuestion (myElement) {
 	} else {
 		if (myElement.parentNode.getAttribute("data-scrolled") === "false") {
 			myNextQuestion = document.getElementById("hc-button-next");
-			window.scroll({ top: myNextQuestion.getBoundingClientRect().top + window.scrollY, left: 0, behavior: 'smooth' });
+			window.scroll({ top: myNextQuestion.getBoundingClientRect().top + window.scrollY - 100, left: 0, behavior: 'smooth' });
 			myNextQuestion.focus();
 			myElement.parentNode.setAttribute("data-scrolled", "true");
 		}
@@ -533,15 +533,15 @@ function checkAnswers () {
 			if (myTopUncheckedAnswer === null) {
 				myTopUncheckedAnswer = element;
 			}
-			element.parentNode.parentNode.classList.add("warning");
+			element.parentNode.parentNode.getElementsByClassName("hc-question-number")[0].classList.add("warning");
 		} else {
-			element.parentNode.parentNode.classList.remove("warning");
+			element.parentNode.parentNode.getElementsByClassName("hc-question-number")[0].classList.remove("warning");
 		}
 	});
 	if (myTopUncheckedAnswer === null) {
 		return true;
 	}
-	window.scroll({ top: myTopUncheckedAnswer.parentNode.parentNode.getBoundingClientRect().top + window.scrollY, left: 0, behavior: 'smooth' });
+	window.scroll({ top: myTopUncheckedAnswer.parentNode.parentNode.getBoundingClientRect().top + window.scrollY - 100, left: 0, behavior: 'smooth' });
 	myTopUncheckedAnswer.focus();
 	return false;
 }

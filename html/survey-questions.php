@@ -19,7 +19,6 @@
         </div>
         <div class='hc-answer-wrapper'>
           <div class='hc-answer-prompt'>
-            Choose an answer
           </div>
           <div class='hc-answer-key clickable'>
             <input type='radio' name='hc-answers-1' id='hc-answers-1-1' value=0>

@@ -30,6 +30,7 @@
        echo "<div class='gone hidden' id='hc-session-id'>" . $uuid . "</div></section>";
        require "html/survey-results.php";
        require "html/survey-questions.php";
+       echo "<footer><div class='hc-footer'><div class='hc-copyright'>© 2017 Sophity All rights reserved</div></div></footer>";
      echo "</body>";
      echo "</html>";
   } else {
