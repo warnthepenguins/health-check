@@ -734,9 +734,9 @@ footer .hc-footer .hc-copyright {
     flex-flow: column nowrap;
   }
 
-  .hc-answer-key.clickable {
+  div.hc-answer-key.clickable {
     margin: 0 auto;
-    flex-flow: column wrap;
+    flex-direction: column;
     justify-content: space-between;
     width: 100%;
     max-width: 250px;
@@ -747,6 +747,7 @@ footer .hc-footer .hc-copyright {
     height: 20%;
     max-height: 2em;
     flex-direction: column;
+    box-shadow: none;
     /*font-size: 1.75em;*/
   }
 
