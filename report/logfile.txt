@@ -242,3 +242,11 @@
 ...php session started
 ...1 new line written from POST at #58dd7d830e3512.97340779
 
+04.04 20:28.36
+...php session started
+...1 new line written from php://input at #58e401def25936.67325377
+
+04.04 20:28.47
+...php session started
+...1 new line written from POST at #58e401def25936.67325377
+
