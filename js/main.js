@@ -49,7 +49,7 @@ function Question (number, text, topic, screen, answer) {
 }
 
 function log (text) {
-//  console.log(text);
+ console.log(text);
 }
 
 function stripSpecialChars (string) {

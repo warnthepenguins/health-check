@@ -1,7 +1,7 @@
 <?php
   echo "
     <section id='hc-question-section'>
-      <div class='hc-topic-header'>
+      <div class='hc-topic-header'> 
         <h2>...</h2>
         <div class='hc-progress-bar card-fixed hidden gone'>
           <div class='hc-progress'></div>

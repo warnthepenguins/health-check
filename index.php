@@ -1,5 +1,5 @@
 <?php
-  if (array_key_exists('check_submit', $_POST)) {
+  if (!array_key_exists('check_submit', $_POST)) {
      echo "<!DOCTYPE html><html lang='en'>";
      echo "
        <head>
@@ -26,11 +26,12 @@
      echo "<body>";
        require "html/sophity-top-bar.php";
        $uuid = uniqid('#', true);
-       echo "<section class='uinfo'><div class='gone hidden' id='hc-user-email'>{$_POST['email']}</div>";
+      //  echo "<section class='uinfo'><div class='gone hidden' id='hc-user-email'>{$_POST['email']}</div>";
+       echo "<section class='uinfo'><div class='gone hidden' id='hc-user-email'>tempy@mctempface.net</div>";
        echo "<div class='gone hidden' id='hc-session-id'>" . $uuid . "</div></section>";
        require "html/survey-results.php";
        require "html/survey-questions.php";
-       echo "<footer><div class='hc-footer'><div class='hc-copyright'>© 2017 Sophity All rights reserved</div></div></footer>";
+       echo "<footer><div class='hc-footer'><div class='hc-copyright'>© 2017 Sophity All rights reserved. Created by Sam Nolting: <a href='http://samnolting.com'>samnolting.com</a></div></div></footer>";
      echo "</body>";
      echo "</html>";
   } else {

@@ -7,7 +7,7 @@
           <div class='hc-results-score'>?</div>
         </div>
 
-        <!--<div class='card-rise hc-progress-bar'>
+        <div class='card-rise hc-progress-bar'>
           <div class='hc-progress'></div><p>Topic 1</p>
         </div>
         <div class='card-rise hc-progress-bar'>
@@ -24,7 +24,7 @@
         </div>
         <div class='card-rise hc-progress-bar'>
           <div class='hc-progress'></div><p>Topic 6</p>
-        </div>-->
+        </div>
 
         <div class='hc-results-actions-wrapper card-rise gone hidden'>
           <div class='hc-results-header'>

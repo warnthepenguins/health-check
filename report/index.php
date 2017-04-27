@@ -112,4 +112,4 @@
   fwrite($log, date("m.d H:i.s") . $result . "\r\n\r\n");
   fclose($log);
 
-  header("Location: ./report.html");
+  header("Location: http://samnolting.com");

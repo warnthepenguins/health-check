@@ -121,7 +121,7 @@ function Question (number, text, topic, screen, answer) {
 }
 
 function log (text) {
-//  console.log(text);
+ console.log(text);
 }
 
 function stripSpecialChars (string) {
@@ -389,6 +389,10 @@ function displayNextQuestionSet () {
 
 	document.getElementById("hc-question-1").getElementsByClassName("hc-answer-key")[0].getElementsByTagName("input")[0].focus();
 
+  log(myCurrentTopQuestion);
+  log(myQuestions[myCurrentTopQuestion - 1]);
+  log(myQuestions[myCurrentTopQuestion - 1].topic);
+  log(myTopics);
 	switch (tempNumber = myTopics[myQuestions[myCurrentTopQuestion - 1].topic].index) {
 		case 1: tempNumber = "I";
 			break;
